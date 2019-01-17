@@ -33,11 +33,11 @@ class Lendbot(commands.Bot):
         print('logged in')
 
     async def check_stock(self, message):
-        if message.content == 'maga':
-            await message.channel.send('maga')
+        if message.author == self.user:
             return
         
-        if message.author == self.user:
+        if message.content == 'maga':
+            await message.channel.send('maga')
             return
 
         msg = message.content

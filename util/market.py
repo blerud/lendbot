@@ -15,7 +15,6 @@ def get_intraday_graph(symbol):
     df.index = pd.to_datetime(df.index)
     df['average'].plot()
     plt.title(symbol)
-    plt.show()
     buf = BytesIO()
     plt.savefig(buf, format='png')
     plt.clf()

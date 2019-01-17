@@ -10,7 +10,7 @@ async def stock(ctx, *args):
         return
     
     ticker = args[0]
-    tickerpattern = re.compile('\$([A-Za-z]+)')
+    tickerpattern = re.compile('\$([A-Za-z\.]+)')
     symbolmatch = tickerpattern.match(ticker)
     if symbolmatch:
         try:

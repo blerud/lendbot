@@ -35,11 +35,15 @@ class Lendbot(commands.Bot):
     async def check_stock(self, message):
         if message.author == self.user:
             return
+        
+        if message.content == 'maga':
+            await message.channel.send('maga')
+            return
 
         msg = message.content
         if msg.startswith('$'):
             try:
-                tickerpattern = re.compile('\$([A-Za-z]+)')
+                tickerpattern = re.compile('\$([A-Za-z\.]+)')
                 symbol = tickerpattern.match(msg)
                 if symbol:
                     price = market.get_stock_price(symbol.group(1))

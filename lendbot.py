@@ -47,7 +47,8 @@ class Lendbot(commands.Bot):
                 symbol = tickerpattern.match(msg)
                 if symbol:
                     price = market.get_stock_price(symbol.group(1))
-                    await message.channel.send('$' + str(price))
+                    pricefmt = '{0:,.2f}'.format(price)
+                    await message.channel.send('$' + str(pricefmt))
             except Exception as e:
                 print('failed stock query ', msg)
                 print(e)

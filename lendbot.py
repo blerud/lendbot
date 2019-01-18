@@ -4,12 +4,11 @@ import asyncio
 import datetime
 import re
 
-from util import market
-
 import config
 import credentials
 
 extensions = [
+    'ext.maga',
     'ext.stock'
 ]
 
@@ -18,8 +17,6 @@ class Lendbot(commands.Bot):
         super().__init__(command_prefix=config.prefix)
 
         self.client_id = credentials.client_id
-
-        self.add_listener(self.check_stock, 'on_message')
 
         for extension in extensions:
             try:
@@ -31,24 +28,3 @@ class Lendbot(commands.Bot):
     async def on_ready(self):
         self.ontime = datetime.datetime.utcnow()
         print('logged in')
-
-    async def check_stock(self, message):
-        if message.author == self.user:
-            return
-        
-        if message.content == 'maga':
-            await message.channel.send('maga')
-            return
-
-        msg = message.content
-        if msg.startswith('$'):
-            try:
-                tickerpattern = re.compile('\$([A-Za-z\.]+)')
-                symbol = tickerpattern.match(msg)
-                if symbol:
-                    price = market.get_stock_price(symbol.group(1))
-                    pricefmt = '{0:,.2f}'.format(price)
-                    await message.channel.send('$' + str(pricefmt))
-            except Exception as e:
-                print('failed stock query ', msg)
-                print(e)

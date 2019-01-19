@@ -39,7 +39,7 @@ async def stock(ctx, *args):
             image.close()
             await ctx.send(file=f)
         except Exception as e:
-            log.warning('failed stock query \"%s\", %s', msg, str(e))
+            log.warning('failed stock query \"%s\", %s', ticker, str(e))
 
 def setup(bot):
     bot.add_listener(check_stock, 'on_message')

@@ -2,10 +2,13 @@ import discord
 from discord.ext import commands
 import asyncio
 import datetime
+import logging
 import re
 
 import config
 import credentials
+
+log = logging.getLogger(__name__)
 
 extensions = [
     'ext.maga',
@@ -21,10 +24,10 @@ class Lendbot(commands.Bot):
         for extension in extensions:
             try:
                 self.load_extension(extension)
-                print('loaded', extension)
+                log.info('loaded %s', extension)
             except Exception as e:
-                print('failed to load ', extension)
+                log.warning('failed to load %s', extension)
     
     async def on_ready(self):
         self.ontime = datetime.datetime.utcnow()
-        print('logged in')
+        log.info('logged in')

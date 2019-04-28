@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import logging
+import random
 
 log = logging.getLogger(__name__)
 
@@ -18,7 +19,8 @@ async def create_role(ctx, role: str):
     guild = ctx.guild
 
     try:
-        await guild.create_role(name=role, mentionable=True)
+        await guild.create_role(name=role, mentionable=True,
+            colour=discord.Colour(0).from_hsv(random.random(), 0.6, 0.7))
         await ctx.send('Created role \"{}\"'.format(role))
     except Exception as e:
         log.warning('failed create role \"%s\", %s', role, str(e))

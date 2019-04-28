@@ -12,7 +12,8 @@ log = logging.getLogger(__name__)
 
 extensions = [
     'ext.maga',
-    'ext.stock'
+    'ext.stock',
+    'ext.role'
 ]
 
 class Lendbot(commands.Bot):

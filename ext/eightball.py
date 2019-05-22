@@ -19,8 +19,8 @@ SLIGHT_POSITIVE = [
     "As I see it, yes.",
     "Most likely.",
     "Outlook good.",
-    "Yes."
-    "Signs point to yes.",
+    "Yes.",
+    "Signs point to yes."
 ]
 STRONG_POSITIVE = [
     "It is certain.",
@@ -36,7 +36,7 @@ def random_quantum(x):
     quantum = (science % 42069 == 25266).any()
     return quantum
 
-def eightball(message):
+async def eightball(message):
     if message.author.bot:
         return
     content, author = message.content, message.author.username

@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 extensions = [
     'ext.maga',
     'ext.stock',
-    'ext.role'
+    'ext.role',
     'ext.eightball'
 ]
 

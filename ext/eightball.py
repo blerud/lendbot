@@ -51,7 +51,6 @@ def eightball(message):
     else:
         choices = NEGATIVE + NEUTRAL + SLIGHT_POSITIVE + STRONG_POSITIVE
     out = np.random.choice(choices)
-    return out
     await message.channel.send(out)
 
 def setup(bot):

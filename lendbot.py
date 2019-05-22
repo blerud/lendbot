@@ -14,6 +14,7 @@ extensions = [
     'ext.maga',
     'ext.stock',
     'ext.role'
+    'ext.eightball'
 ]
 
 class Lendbot(commands.Bot):

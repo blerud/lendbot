@@ -49,7 +49,7 @@ def eightball(message):
     elif random_quantum(content):
         choices = STRONG_POSITIVE
     else:
-        choices = NEGATIVE + NEGATIVE + SLIGHT_POSITIVE + STRONG_POSITIVE
+        choices = NEGATIVE + NEUTRAL + SLIGHT_POSITIVE + STRONG_POSITIVE
     out = np.random.choice(choices)
     return out
     await message.channel.send(out)

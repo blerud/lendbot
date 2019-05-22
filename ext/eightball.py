@@ -39,7 +39,7 @@ def random_quantum(x):
 async def eightball(message):
     if message.author.bot:
         return
-    content, author = message.content, message.author.username
+    content, author = message.content, message.author.display_name
     if not content.startswith('.8ball'):
         return
 

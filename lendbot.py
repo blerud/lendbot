@@ -14,7 +14,8 @@ extensions = [
     'ext.maga',
     'ext.stock',
     'ext.role',
-    'ext.eightball'
+    'ext.eightball',
+    'ext.poker',
 ]
 
 class Lendbot(commands.Bot):
@@ -29,7 +30,8 @@ class Lendbot(commands.Bot):
                 log.info('loaded %s', extension)
             except Exception as e:
                 log.warning('failed to load %s', extension)
-    
+                raise e
+
     async def on_ready(self):
         self.ontime = datetime.datetime.utcnow()
         log.info('logged in')

@@ -1,4 +1,6 @@
 __pycache__/
 .vscode/
 credentials.py
+Pipfile
+Pipfile.lock
 logs/

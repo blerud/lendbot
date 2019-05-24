@@ -221,7 +221,7 @@ class Game:
 
     # Returns messages telling the current player their options
     def cur_options(self) -> List[str]:
-        messages = [f"It is {self.current_player.mention}'s turn. "
+        messages = [f"It is {self.current_player.user.mention}'s turn. "
                     f"{self.current_player.user.name} currently has "
                     f"${self.current_player.balance}. "
                     f"The pot is currently ${self.pot.value}."]

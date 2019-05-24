@@ -140,7 +140,9 @@ def raise_bet(game: Game, message: discord.Message) -> List[str]:
                 "like to raise it by."]
     try:
         amount = int(tokens[2])
-        if game.cur_bet >= game.current_player.max_bet:
+        if amount < 0:
+            return ["You cannot raise by a negative amount."]
+        elif game.cur_bet >= game.current_player.max_bet:
             return ["You don't have enough money to raise the current bet "
                     f"of ${game.cur_bet}."]
         elif game.cur_bet + amount > game.current_player.max_bet:

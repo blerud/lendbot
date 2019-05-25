@@ -4,6 +4,7 @@ from enum import Enum
 from typing import Dict, List
 
 import discord
+import random
 
 from ext.pokermodule.player import Player
 from ext.pokermodule.rules import best_possible_hand, Card, Deck
@@ -15,7 +16,9 @@ GAME_OPTIONS: Dict[str, Option] = {
     "blind":  Option("The current price of the small blind", 100),
     "buy-in": Option("The amount of money all players start out with", 10000),
     "raise-delay": Option("The number of minutes before blinds double",  0),
-    "starting-blind": Option("The starting price of the small blind", 100)
+    "starting-blind": Option("The starting price of the small blind", 100),
+    "auto-deal": Option("Automatically deal cards after a round", 1),
+    "tournament": Option("Tournament mode (no buy-ins during the game)", 0)
 }
 
 # An enumeration that says what stage of the game we've reached
@@ -68,7 +71,9 @@ class Game:
     def add_player(self, user: discord.User) -> bool:
         if self.is_player(user):
             return False
-        self.players.append(Player(user))
+        player = Player(user)
+        player.balance = self.options["buy-in"]
+        self.players.append(player)
         return True
 
     # Returns whether a user is playing in the game
@@ -105,8 +110,9 @@ class Game:
         messages = []
         for player in self.players:
             messages.append(f"{player.user.name} has ${player.balance}.")
-        messages.append(f"{self.dealer.user.mention} is the current dealer. "
-                        "Message `.p deal` to deal when you're ready.")
+        if not self.options["auto-deal"]:
+            messages.append(f"{self.dealer.user.mention} is the current dealer. "
+                            "Message `.p deal` to deal when you're ready.")
         return messages
 
     # Moves on to the next dealer
@@ -130,12 +136,13 @@ class Game:
     # Starts a new game, returning the messages to tell the channel
     def start(self) -> List[str]:
         self.state = GameState.NO_HANDS
-        self.dealer_index = 0
-        for player in self.players:
-            player.balance = self.options["buy-in"]
+        self.dealer_index = random.randint(0, len(self.players))
         # Reset the blind to be the starting blind value
         self.options["blind"] = self.options["starting-blind"]
-        return ["The game has begun!"] + self.status_between_rounds()
+        messages = ["The game has begun!"] + self.status_between_rounds()
+        if self.options["auto-deal"]:
+            messages += self.deal_hands()
+        return messages
 
     # Starts a new round of Hold'em, dealing two cards to each player, and
     # return the messages to tell the channel
@@ -317,6 +324,8 @@ class Game:
         self.state = GameState.NO_HANDS
         self.next_dealer()
         messages += self.status_between_rounds()
+        if self.options["auto-deal"]:
+            messages += self.deal_hands()
         return messages
 
     # Make the current player check, betting no additional money
@@ -363,7 +372,10 @@ class Game:
             winner.balance += self.pot.value
             self.state = GameState.NO_HANDS
             self.next_dealer()
-            return messages + self.status_between_rounds()
+            messages += self.status_between_rounds()
+            if self.options["auto-deal"]:
+                messages += self.deal_hands()
+            return messages
 
         # If there's still betting to do, go on to the next turn
         if not self.pot.betting_over():

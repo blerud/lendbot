@@ -209,6 +209,8 @@ def set_option(game: Game, message: discord.Message) -> List[str]:
     elif tokens[2] not in GAME_OPTIONS:
         return [f"'{tokens[2]}' is not an option. Message `.p options` to see "
                 "the list of options."]
+    elif game.state not in (GameState.NO_GAME, GameState.WAITING):
+        return ["Cannot change game options while a game is running."]
     try:
         val = int(tokens[3])
         if val < 0:

@@ -4,6 +4,7 @@ from enum import Enum
 from typing import Dict, List
 
 import discord
+import random
 
 from ext.pokermodule.player import Player
 from ext.pokermodule.rules import best_possible_hand, Card, Deck
@@ -16,7 +17,8 @@ GAME_OPTIONS: Dict[str, Option] = {
     "buy-in": Option("The amount of money all players start out with", 10000),
     "raise-delay": Option("The number of minutes before blinds double",  0),
     "starting-blind": Option("The starting price of the small blind", 100),
-    "auto-deal": Option("Automatically deal cards after a round", 1)
+    "auto-deal": Option("Automatically deal cards after a round", 1),
+    "tournament": Option("Tournament mode (no buy-ins during the game)", 0)
 }
 
 # An enumeration that says what stage of the game we've reached
@@ -69,7 +71,9 @@ class Game:
     def add_player(self, user: discord.User) -> bool:
         if self.is_player(user):
             return False
-        self.players.append(Player(user))
+        player = Player(user)
+        player.balance = self.options["buy-in"]
+        self.players.append(player)
         return True
 
     # Returns whether a user is playing in the game
@@ -132,9 +136,7 @@ class Game:
     # Starts a new game, returning the messages to tell the channel
     def start(self) -> List[str]:
         self.state = GameState.NO_HANDS
-        self.dealer_index = 0
-        for player in self.players:
-            player.balance = self.options["buy-in"]
+        self.dealer_index = random.randint(0, len(self.players))
         # Reset the blind to be the starting blind value
         self.options["blind"] = self.options["starting-blind"]
         messages = ["The game has begun!"] + self.status_between_rounds()

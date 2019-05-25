@@ -32,9 +32,8 @@ def join_game(game: Game, message: discord.Message) -> List[str]:
     if game.state == GameState.NO_GAME:
         return ["No game has been started yet for you to join.",
                 "Message `.p newgame` to start a new game."]
-    elif game.state != GameState.WAITING:
-        return [f"The game is already in progress, {message.author.name}.",
-                "You're not allowed to join right now."]
+    elif game.state != GameState.WAITING and game.options["tournament"]:
+        return ["You're not allowed to join a tournament in progress."]
     elif game.add_player(message.author):
         return [f"{message.author.name} has joined the game!",
                 "Message `.p join` to join the game, "

@@ -316,7 +316,7 @@ async def on_message(message):
         # to the channel to see if hands were just dealt, and if so, we tell the
         # players what their hands are.
         if game.options["auto-deal"] and game.state == GameState.NO_HANDS:
-            game.deal_hands()
+            messages += game.deal_hands()
             await game.tell_hands(client)
         elif command == 'deal' and messages[0] == 'The hands have been dealt!':
             await game.tell_hands(client)

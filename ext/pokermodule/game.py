@@ -139,10 +139,7 @@ class Game:
         self.dealer_index = random.randint(0, len(self.players))
         # Reset the blind to be the starting blind value
         self.options["blind"] = self.options["starting-blind"]
-        messages = ["The game has begun!"] + self.status_between_rounds()
-        if self.options["auto-deal"]:
-            messages += self.deal_hands()
-        return messages
+        return ["The game has begun!"] + self.status_between_rounds()
 
     # Starts a new round of Hold'em, dealing two cards to each player, and
     # return the messages to tell the channel
@@ -324,8 +321,6 @@ class Game:
         self.state = GameState.NO_HANDS
         self.next_dealer()
         messages += self.status_between_rounds()
-        if self.options["auto-deal"]:
-            messages += self.deal_hands()
         return messages
 
     # Make the current player check, betting no additional money
@@ -373,8 +368,6 @@ class Game:
             self.state = GameState.NO_HANDS
             self.next_dealer()
             messages += self.status_between_rounds()
-            if self.options["auto-deal"]:
-                messages += self.deal_hands()
             return messages
 
         # If there's still betting to do, go on to the next turn

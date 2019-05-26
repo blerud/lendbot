@@ -239,7 +239,7 @@ class Game:
         for player in self.players:
             name = player.user.name
             if player == self.dealer:
-                name = f"_{name}_"
+                name = f"__{name}__"
             if player == self.current_player:
                 name = f"**{name}**"
             if player.cur_bet > 0:
@@ -314,6 +314,7 @@ class Game:
 
         for player in self.pot.in_pot():
             hand_name = str(best_possible_hand(self.shared_cards, player.cards))
+            value = f"{player.cards[0]}  {player.cards[1]}  ({hand_name})"
 
             if player in winners:
                 name = f"**{player.user.name}:** ${player.balance} (+${winners[player]})"

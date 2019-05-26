@@ -3,7 +3,7 @@ from typing import Dict, List
 
 import discord
 
-from ext.pokermodule.game import Game, GAME_OPTIONS, GameState
+from ext.pokermodule.game import Game, GAME_OPTIONS, GameState, EmbedTitle, EmbedDescription, EmbedField, EmbedFooter
 
 client = None
 games: Dict[discord.TextChannel, Game] = {}
@@ -227,8 +227,7 @@ def chip_count(game: Game, message: discord.Message) -> List[str]:
     if game.state in (GameState.NO_GAME, GameState.WAITING):
         return ["You can't request a chip count because the game "
                 "hasn't started yet."]
-    return [f"{player.user.name} has ${player.balance}."
-            for player in game.players]
+    return game.cur_options()
 
 # Handles a player going all-in, returning an error message if the player
 # cannot go all-in for some reason. Returns the list of messages for the bot
@@ -282,7 +281,43 @@ commands: Dict[str, Command] = {
                         all_in),
 }
 
-async def on_message(message):
+async def send_messages(messages, channel):
+    result = []
+    embed = discord.Embed(color=0xff0000)
+    title = None
+    footer = None
+    show_embed = False
+
+    if len(messages) == 0:
+        return
+
+    for m in messages:
+        if isinstance(m, str):
+            result.append(m)
+        elif isinstance(m, EmbedTitle):
+            title = f"{title}\n{m.title}" if title is not None else m.title
+            show_embed = True
+        elif isinstance(m, EmbedDescription):
+            embed.description = m.description
+            show_embed = True
+        elif isinstance(m, EmbedField):
+            embed.add_field(name=m.name, value=m.value, inline=m.inline)
+            show_embed = True
+        elif isinstance(m, EmbedFooter):
+            footer = f"{footer}\n{m.text}" if footer is not None else m.text
+            show_embed = True
+
+    if title is not None:
+        embed.title = title
+    if footer is not None:
+        embed.set_footer(text=footer)
+
+    if show_embed:
+        await channel.send('\n'.join(result), embed=embed)
+    else:
+        await channel.send('\n'.join(result))
+
+async def on_message(message : discord.Message):
     # Ignore messages sent by the bot itself
     if message.author == client.user:
         return
@@ -308,20 +343,28 @@ async def on_message(message):
                                 "Message `.p help` to see the list of commands.")
             return
 
+        messages = []
+        messages2 = []
         game = games.setdefault(message.channel, Game())
+        deal_hands = command == 'deal' and game.state == GameState.NO_HANDS
         messages = commands[command].action(game, message)
 
+        if game.options["auto-deal"] and game.state == GameState.NO_HANDS:
+            messages2 = game.deal_hands()
+            tell_hands = True
+        elif deal_hands and game.state == GameState.HANDS_DEALT:
+            tell_hands = True
+        else:
+            tell_hands = False
+
+        await send_messages(messages, message.channel)
         # The messages to send to the channel and the messages to send to the
         # players individually must be done seperately, so we check the messages
         # to the channel to see if hands were just dealt, and if so, we tell the
         # players what their hands are.
-        if game.options["auto-deal"] and game.state == GameState.NO_HANDS:
-            messages += game.deal_hands()
+        if tell_hands:
             await game.tell_hands(client)
-        elif command == 'deal' and messages[0] == 'The hands have been dealt!':
-            await game.tell_hands(client)
-
-        await message.channel.send('\n'.join(messages))
+        await send_messages(messages2, message.channel)
 
 def setup(bot):
     global client

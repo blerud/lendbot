@@ -10,6 +10,11 @@ from ext.pokermodule.player import Player
 from ext.pokermodule.rules import best_possible_hand, Card, Deck
 from ext.pokermodule.pot import PotManager
 
+EmbedTitle = namedtuple("EmbedTitle", ["title"])
+EmbedDescription = namedtuple("EmbedDescription", ["description"])
+EmbedField = namedtuple("EmbedField", ["name", "value", "inline"])
+EmbedFooter = namedtuple("EmbedFooter", ["text"])
+
 Option = namedtuple("Option", ["description", "default"])
 
 GAME_OPTIONS: Dict[str, Option] = {
@@ -106,13 +111,18 @@ class Game:
             self.turn_index = 0
 
     # Returns some messages to update the players on the state of the game
-    def status_between_rounds(self) -> List[str]:
+    def status_between_rounds(self) -> List[object]:
         messages = []
-        for player in self.players:
-            messages.append(f"{player.user.name} has ${player.balance}.")
         if not self.options["auto-deal"]:
-            messages.append(f"{self.dealer.user.mention} is the current dealer. "
-                            "Message `.p deal` to deal when you're ready.")
+            messages.append(EmbedFooter("Message .p deal to deal."))
+        # Print chip count
+        for player in self.players:
+            name = player.user.name
+            if player == self.dealer:
+                name = f"__{name}__"
+            if player == self.current_player:
+                name = f"**{name}**"
+            messages.append(EmbedField(name, f"${player.balance}", True))
         return messages
 
     # Moves on to the next dealer
@@ -136,10 +146,13 @@ class Game:
     # Starts a new game, returning the messages to tell the channel
     def start(self) -> List[str]:
         self.state = GameState.NO_HANDS
-        self.dealer_index = random.randint(0, len(self.players))
+        self.dealer_index = random.randint(0, len(self.players) - 1)
         # Reset the blind to be the starting blind value
         self.options["blind"] = self.options["starting-blind"]
-        return ["The game has begun!"] + self.status_between_rounds()
+        if self.options["auto-deal"]:
+            return [EmbedTitle("The game has begun!")]
+        else:
+            return [EmbedTitle("The game has begun!")] + self.status_between_rounds()
 
     # Starts a new round of Hold'em, dealing two cards to each player, and
     # return the messages to tell the channel
@@ -160,7 +173,7 @@ class Game:
             self.in_hand.append(player)
 
         self.state = GameState.HANDS_DEALT
-        messages = ["The hands have been dealt!"]
+        messages = [EmbedTitle("The hands have been dealt!")]
 
         # Reset the pot for the new hand
         self.pot.new_hand(self.players)
@@ -172,8 +185,8 @@ class Game:
         return messages + self.next_turn()
 
     # Makes the blinds players pay up with their initial bets
-    def pay_blinds(self) -> List[str]:
-        messages: List[str] = []
+    def pay_blinds(self) -> List[object]:
+        messages: List[object] = []
 
         # See if we need to raise the blinds or not
         raise_delay = self.options["raise-delay"]
@@ -185,7 +198,7 @@ class Game:
             # Start the timer, if it hasn't been started yet
             self.last_raise = datetime.now()
         elif datetime.now() - self.last_raise > timedelta(minutes=raise_delay):
-            messages.append("**Blinds are being doubled this round!**")
+            messages.append(EmbedField("**Blinds are being doubled this round!**", u"\u200B", False))
             self.options["blind"] *= 2
             self.last_raise = datetime.now()
 
@@ -208,62 +221,69 @@ class Game:
             self.turn_index = self.dealer_index
             self.first_bettor = self.dealer_index - 1
 
-        messages.append(f"{small_player.name} has paid the small blind "
-                        f"of ${blind}.")
-
         if self.pot.pay_blind(small_player, blind):
-            messages.append(f"{small_player.name} is all in!")
             self.leave_hand(small_player)
 
-        messages.append(f"{big_player.name} has paid the big blind "
-                        f"of ${blind * 2}.")
         if self.pot.pay_blind(big_player, blind * 2):
-            messages.append(f"{big_player.name} is all in!")
             self.leave_hand(big_player)
 
         return messages
 
     # Returns messages telling the current player their options
-    def cur_options(self) -> List[str]:
-        messages = [f"It is {self.current_player.user.mention}'s turn. "
-                    f"{self.current_player.user.name} currently has "
-                    f"${self.current_player.balance}. "
-                    f"The pot is currently ${self.pot.value}."]
-        if self.pot.cur_bet > 0:
-            messages.append(f"The current bet to meet is ${self.cur_bet}, "
-                            f"and {self.current_player.name} has bet "
-                            f"${self.current_player.cur_bet}.")
-        else:
-            messages.append(f"The current bet to meet is ${self.cur_bet}.")
+    def cur_options(self) -> List[object]:
+        messages = [self.current_player.user.mention,
+                    EmbedTitle(f"It is {self.current_player.user.name}'s turn."),
+                    EmbedDescription(f"Pot: ${self.pot.value} | Current bet: ${self.pot.cur_bet}")]
+
+        # Print chip count
+        for player in self.players:
+            name = player.user.name
+            if player == self.dealer:
+                name = f"_{name}_"
+            if player == self.current_player:
+                name = f"**{name}**"
+            if player.cur_bet > 0:
+                name += f": ${player.cur_bet}"
+            if player not in self.pot.pots[0].players:
+                name = f"~~{name}~~"
+
+            value = f"${player.balance}"
+            if player.balance == 0:
+                value += " (All-in!)"
+            messages.append(EmbedField(name, value, True))
+
         if self.current_player.cur_bet == self.cur_bet:
-            messages.append("Message `.p check`, `.p raise` or `.p fold`.")
+            messages.append(EmbedFooter("Message .p check, .p raise or .p fold."))
         elif self.current_player.max_bet > self.cur_bet:
-            messages.append("Message `.p call`, `.p raise` or `.p fold`.")
+            messages.append(EmbedFooter("Message .p call, .p raise or .p fold."))
         else:
-            messages.append("Message `.p allin` or `.p fold`.")
+            messages.append(EmbedFooter("Message .p allin or .p fold."))
         return messages
 
     # Advances to the next round of betting (or to the showdown), returning a
     # list messages to tell the players
-    def next_round(self) -> List[str]:
-        messages: List[str] = []
+    def next_round(self) -> List[object]:
+        messages: List[object] = []
+        name = ""
         if self.state == GameState.HANDS_DEALT:
-            messages.append("Dealing the flop:")
+            name = "Dealing the flop:"
             self.shared_cards.append(self.cur_deck.draw())
             self.shared_cards.append(self.cur_deck.draw())
             self.shared_cards.append(self.cur_deck.draw())
             self.state = GameState.FLOP_DEALT
         elif self.state == GameState.FLOP_DEALT:
-            messages.append("Dealing the turn:")
+            name = "Dealing the turn:"
             self.shared_cards.append(self.cur_deck.draw())
             self.state = GameState.TURN_DEALT
         elif self.state == GameState.TURN_DEALT:
-            messages.append("Dealing the river:")
+            name = "Dealing the river:"
             self.shared_cards.append(self.cur_deck.draw())
             self.state = GameState.RIVER_DEALT
         elif self.state == GameState.RIVER_DEALT:
             return self.showdown()
-        messages.append("  ".join(str(card) for card in self.shared_cards))
+        value = "  ".join(str(card) for card in self.shared_cards)
+
+        messages.append(EmbedField(name, value, False))
         self.pot.next_round()
         self.turn_index = self.first_bettor
         return messages + self.cur_options()
@@ -284,20 +304,26 @@ class Game:
         while len(self.shared_cards) < 5:
             self.shared_cards.append(self.cur_deck.draw())
 
-        messages = ["We have reached the end of betting. "
-                    "All cards will be revealed."]
-
-        messages.append("  ".join(str(card) for card in self.shared_cards))
-
-        for player in self.pot.in_pot():
-            messages.append(f"{player.name}'s hand: "
-                            f"{player.cards[0]}  {player.cards[1]}")
+        messages = [EmbedField("Betting has concluded. Dealing and revealing the remaining cards:",
+            "  ".join(str(card) for card in self.shared_cards), False)]
 
         winners = self.pot.get_winners(self.shared_cards)
+
         for winner, winnings in sorted(winners.items(), key=lambda item: item[1]):
-            hand_name = str(best_possible_hand(self.shared_cards, winner.cards))
-            messages.append(f"{winner.name} wins ${winnings} with a {hand_name}.")
             winner.balance += winnings
+
+        for player in self.pot.in_pot():
+            hand_name = str(best_possible_hand(self.shared_cards, player.cards))
+
+            if player in winners:
+                name = f"**{player.user.name}:** ${player.balance} (+${winners[player]})"
+                value = f"{player.cards[0]}  {player.cards[1]}  **({hand_name})**"
+            elif player.balance == 0:
+                name = f"~~{player.user.name}~~: ${player.balance}"
+            else:
+                name = f"{player.user.name}: ${player.balance}"
+
+            messages.append(EmbedField(name, value, True))
 
         # Remove players that went all in and lost
         i = 0
@@ -306,12 +332,10 @@ class Game:
             if player.balance > 0:
                 i += 1
             else:
-                messages.append(f"{player.name} has been knocked out of the game!")
                 self.players.pop(i)
                 if len(self.players) == 1:
                     # There's only one player, so they win
-                    messages.append(f"{self.players[0].user.name} wins the game! "
-                                    "Congratulations!")
+                    messages.append(EmbedField(f":tada:{self.players[0].user.name} wins the game!", "Congratulations!", False))
                     self.state = GameState.NO_GAME
                     return messages
                 if i <= self.dealer_index:
@@ -320,54 +344,59 @@ class Game:
         # Go on to the next round
         self.state = GameState.NO_HANDS
         self.next_dealer()
-        messages += self.status_between_rounds()
+        if not self.options["auto-deal"]:
+            messages += self.status_between_rounds()
         return messages
 
     # Make the current player check, betting no additional money
-    def check(self) -> List[str]:
+    def check(self) -> List[object]:
         self.current_player.placed_bet = True
-        return [f"{self.current_player.name} checks."] + self.next_turn()
+        return [EmbedTitle(f"{self.current_player.name} checks.")] + self.next_turn()
 
     # Has the current player raise a certain amount
-    def raise_bet(self, amount: int) -> List[str]:
+    def raise_bet(self, amount: int) -> List[object]:
         self.pot.handle_raise(self.current_player, amount)
-        messages = [f"{self.current_player.name} raises by ${amount}."]
+        messages = [EmbedTitle(f"{self.current_player.name} raises by ${amount}.")]
         if self.current_player.balance == 0:
-            messages.append(f"{self.current_player.name} is all in!")
             self.leave_hand(self.current_player)
             self.turn_index -= 1
         return messages + self.next_turn()
 
     # Has the current player match the current bet
-    def call(self) -> List[str]:
+    def call(self) -> List[object]:
         self.pot.handle_call(self.current_player)
-        messages = [f"{self.current_player.name} calls."]
+        messages = [EmbedTitle(f"{self.current_player.name} calls.")]
         if self.current_player.balance == 0:
-            messages.append(f"{self.current_player.name} is all in!")
             self.leave_hand(self.current_player)
             self.turn_index -= 1
         return messages + self.next_turn()
 
-    def all_in(self) -> List[str]:
+    def all_in(self) -> List[object]:
         if self.pot.cur_bet > self.current_player.max_bet:
             return self.call()
         else:
             return self.raise_bet(self.current_player.max_bet - self.cur_bet)
 
     # Has the current player fold their hand
-    def fold(self) -> List[str]:
-        messages = [f"{self.current_player.name} has folded."]
+    def fold(self) -> List[object]:
+        messages = [EmbedTitle(f"{self.current_player.name} has folded.")]
         self.pot.handle_fold(self.current_player)
         self.leave_hand(self.current_player)
 
         # If only one person is left in the pot, give it to them instantly
         if len(self.pot.in_pot()) == 1:
             winner = list(self.pot.in_pot())[0]
-            messages += [f"{winner.name} wins ${self.pot.value}!"]
+            messages += [EmbedField(f"{winner.name} wins ${self.pot.value}!", u"\u200B", False)]
             winner.balance += self.pot.value
+
+            # Print winner's chip count
+            name = f"**{winner.user.name}:** ${winner.balance} (+${self.pot.value})"
+            messages.append(EmbedField(name, u"\u200B", True))
+
             self.state = GameState.NO_HANDS
             self.next_dealer()
-            messages += self.status_between_rounds()
+            if not self.options["auto-deal"]:
+                messages += self.status_between_rounds()
             return messages
 
         # If there's still betting to do, go on to the next turn

@@ -150,7 +150,7 @@ class Game:
         # Reset the blind to be the starting blind value
         self.options["blind"] = self.options["starting-blind"]
         if self.options["auto-deal"]:
-            return ["The game has begun!"]
+            return [EmbedTitle("The game has begun!")]
         else:
             return [EmbedTitle("The game has begun!")] + self.status_between_rounds()
 

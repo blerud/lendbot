@@ -5,7 +5,10 @@ async def maga(message):
         return
 
     if message.content.lower() == 'maga':
-        await message.channel.send(message.content)
+        i = 0
+        while i < 3:
+            await message.channel.send(message.content)
+            ++i
 
 def setup(bot):
     bot.add_listener(maga, 'on_message')

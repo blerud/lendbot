@@ -11,6 +11,7 @@ async def role(ctx):
         await ctx.send('''```.role create [role]
 .role rename [role] [newrole]
 .role delete [role]
+.role listusers [role]
 .role addusers [role] [users]...
 .role delusers [role] [users]...```''')
 
@@ -44,6 +45,14 @@ async def delete_role(ctx, role: discord.Role):
         await ctx.send('Deleted role \"{}\"'.format(role))
     except Exception as e:
         log.warning('failed delete role \"%s\", %s', role, str(e))
+
+@role.command(name='listusers')
+async def list_users(ctx, role: discord.Role):
+    try:
+        members = list(map(lambda x: x.name, role.members))
+        await ctx.send('Users in role \"{}\": {}'.format(role, ' '.join(members)))
+    except Exception as e:
+        log.warning('failed retrieve users of role \"%s\"', role, str(e))
 
 @role.command(name='addusers')
 async def add_users(ctx, role: discord.Role, members: commands.Greedy[discord.Member]):

@@ -49,8 +49,8 @@ async def delete_role(ctx, role: discord.Role):
 @role.command(name='listusers')
 async def list_users(ctx, role: discord.Role):
     try:
-        members = list(map(lambda x: x.name, role.members))
-        await ctx.send('Users in role \"{}\": {}'.format(role, ' '.join(members)))
+        members = list(map(lambda x: x.nick, role.members))
+        await ctx.send('Users in role \"{}\": {}'.format(role, ', '.join(members)))
     except Exception as e:
         log.warning('failed retrieve users of role \"%s\"', role, str(e))
 

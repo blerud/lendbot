@@ -16,7 +16,8 @@ extensions = [
     'ext.role',
     'ext.eightball',
     'ext.poker',
-    'ext.minecraft'
+    'ext.minecraft',
+    'ext.ping',
 ]
 
 class Lendbot(commands.Bot):

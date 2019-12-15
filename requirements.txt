@@ -1,0 +1,7 @@
+discord-py
+numpy
+pandas
+matplotlib
+boto3
+iexfinance
+scipy

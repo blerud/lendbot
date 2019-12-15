@@ -17,4 +17,4 @@ Create `credentials.py` and create fields `client_id` and `token`.
 ## Running
 Activate virtualenv: `source venv/bin/activate` on Unix or `venv/Scripts/activate` on Windows
 
-Run the launcher: `python3 launcher.py`
+Run the launcher: `./launch`

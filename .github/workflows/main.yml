@@ -15,5 +15,5 @@ jobs:
         # GCP authorization credentials
         APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
       with:
-        args: compute ssh instance-1 --zone=us-central1-c --command='sudo pkill python3; cd /home/lawrence/lendbot; git pull; nohup python3 launcher.py &'
+        args: compute ssh instance-1 --zone=us-central1-c --command='sudo pkill python3; cd /home/lawrence/lendbot; git pull; nohup venv/bin/python3 launcher.py &'
       

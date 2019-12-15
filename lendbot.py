@@ -18,6 +18,7 @@ extensions = [
     'ext.poker',
     'ext.minecraft',
     'ext.ping',
+    'ext.pin',
 ]
 
 class Lendbot(commands.Bot):

@@ -9,10 +9,11 @@ jobs:
     steps:
     - name: Google Cloud Platform (GCP) CLI - gcloud
       uses: actions-hub/gcloud@master
-      with:
+      env:
         # Project id
         PROJECT_ID: lendbot
         # GCP authorization credentials
         APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+      with:
         args: sudo pkill python3 && cd /home/lawrence/lendbot && git pull && nohup python3 launcher.py &
       

@@ -15,6 +15,18 @@ async def role(ctx):
 .role addusers [role] [users]...
 .role delusers [role] [users]...```''')
 
+@role.command(name='list')
+async def list(ctx):
+    guild = ctx.guild
+    if guild != None:
+        msg = 'Roles in this server:\n```'
+        for role in guild.roles:
+            if role.name == '@everyone':
+                continue
+            msg += role.name + '\n'
+        msg += '```'
+        await ctx.send(msg)
+
 @role.command(name='create')
 async def create_role(ctx, role: str):
     guild = ctx.guild

@@ -9,6 +9,7 @@ log = logging.getLogger(__name__)
 async def role(ctx):
     if ctx.message.content.strip() == '.role':
         await ctx.send('''```.role create [role]
+.role list
 .role rename [role] [newrole]
 .role delete [role]
 .role listusers [role]
@@ -16,7 +17,7 @@ async def role(ctx):
 .role delusers [role] [users]...```''')
 
 @role.command(name='list')
-async def list(ctx):
+async def listusers(ctx):
     guild = ctx.guild
     if guild != None:
         msg = 'Roles in this server:\n```'

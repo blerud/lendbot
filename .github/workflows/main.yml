@@ -15,4 +15,4 @@ jobs:
         # GCP authorization credentials
         APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
       with:
-        args: compute ssh instance-1 --zone=us-central1-c --command='cd /home/lendbot/lendbot; ./launch'
+        args: compute ssh lendbot@instance-1 --zone=us-central1-c --command='cd /home/lendbot/lendbot; ./launch'

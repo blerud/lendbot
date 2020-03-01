@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 sudo kill $(cat lendbot.pid)
 yes | git pull
 nohup venv/bin/python3 launcher.py &

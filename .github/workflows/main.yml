@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - kevin1055-patch-1
 jobs:
   deploy:
     runs-on: ubuntu-latest

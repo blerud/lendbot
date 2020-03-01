@@ -1,5 +1,8 @@
-#!/bin/sh
+#!/bin/sh -x
 sudo kill $(cat lendbot.pid)
+echo $?
 yes | git pull
+echo $?
 nohup venv/bin/python3 launcher.py &
 sudo echo $! > lendbot.pid
+echo $?

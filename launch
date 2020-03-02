@@ -9,5 +9,7 @@ git pull
 echo $?
 nohup venv/bin/python3 launcher.py &
 echo $?
+ls -l lendbot.pid
+echo $?
 sudo echo $! > lendbot.pid
 echo $?

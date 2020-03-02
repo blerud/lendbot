@@ -1,5 +1,5 @@
 #!/bin/sh -x
-sudo kill $(cat lendbot.pid)
+kill $(cat lendbot.pid)
 echo "exit code $?"
 ls -l lendbot.pid
 echo "exit code $?"
@@ -8,5 +8,5 @@ echo "exit code $?"
 nohup venv/bin/python3 launcher.py &
 echo "exit code $?"
 echo "pid: $!"
-sudo echo $! > lendbot.pid
+echo $! > lendbot.pid
 echo "exit code $?"

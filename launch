@@ -1,8 +1,4 @@
 #!/bin/sh -x
-sudo kill $(cat lendbot.pid)
-echo $?
-yes | git pull
-echo $?
+kill $(cat lendbot.pid)
 nohup venv/bin/python3 launcher.py &
-sudo echo $! > lendbot.pid
-echo $?
+echo $! > lendbot.pid

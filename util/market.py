@@ -1,6 +1,5 @@
 from datetime import date, datetime, timedelta
 import pytz.reference
-import pandas
 from io import BytesIO
 
 import yfinance as yf
@@ -11,6 +10,7 @@ import pandas as pd
 
 def get_stock_price(symbol):
     info = yf.Ticker(symbol).info
+    return (info['ask'] + info['bid']) / 2
 
 def get_intraday_graph(symbol):
     now = datetime.now()

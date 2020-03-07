@@ -19,6 +19,7 @@ extensions = [
     'ext.minecraft',
     'ext.ping',
     'ext.pin',
+    'ext.karma',
 ]
 
 class Lendbot(commands.Bot):

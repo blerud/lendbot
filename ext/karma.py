@@ -22,8 +22,6 @@ class Karma(commands.Cog):
         direction = 1 if match.groups()[0] == '++' else -1
 
         karma_change = 1
-        if match.groups()[1] != None:
-            karma_change = int(match.groups()[1])
 
         for member in message.mentions:
             if str(member.id) not in self.karma_dict:

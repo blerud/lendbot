@@ -11,7 +11,6 @@ class Karma(commands.Cog):
 
     def __init__(self):
         self.karma_dict = self.load_from_file(self._filename)
-        print(self.karma_dict)
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):

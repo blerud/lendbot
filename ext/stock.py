@@ -35,7 +35,7 @@ async def stock(ctx, *args):
         try:
             symbol = symbolmatch.group(1)
             image = market.get_intraday_graph(symbol)
-            f = discord.File(image.read(), filename=symbol+'.png')
+            f = discord.File(image, filename=symbol+'.png')
             image.close()
             await ctx.send(file=f)
         except Exception as e:

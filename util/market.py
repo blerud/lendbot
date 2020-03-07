@@ -17,7 +17,7 @@ def get_intraday_graph(symbol):
     today = date.today()
     df = yf.download(symbol, datetime.now() - timedelta(days=7), interval='5m')
     last_business_day = df.iloc[[-1]].index.floor(freq='d')[0]
-    df = df.truncate(before=pandas.Timestamp(ts_input=last_business_day))
+    df = df.truncate(before=pd.Timestamp(ts_input=last_business_day))
     ax = df['Close'].plot()
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%I:%M %p"))
     ax.xaxis.set_minor_formatter(mdates.DateFormatter("%I:%M %p"))

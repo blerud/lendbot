@@ -1,7 +1,8 @@
 discord-py
 numpy
 pandas
+pandas_datareader
 matplotlib
 boto3
-iexfinance
+yfinance
 scipy

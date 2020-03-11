@@ -20,6 +20,7 @@ def get_stock_price(symbol):
     return (info['ask'] + info['bid']) / 2
 
 def get_intraday_graph(symbol):
+    symbol = symbol.upper()
     now = datetime.now()
     today = date.today()
 
@@ -40,7 +41,7 @@ def get_intraday_graph(symbol):
     plt.fill_between(close.index, close.min(0), close, alpha=0.5, color=fill_green if bull else fill_red)
     plt.margins(x=0, y=0)
     plt.grid(axis='y')
-    plt.title("{}: {}".format(symbol.upper(), last_business_day.strftime("%A, %B %d %Y")))
+    plt.title("{}: {}".format(symbol, last_business_day.strftime("%A, %B %d %Y")))
 
     buf = BytesIO()
     plt.savefig(buf, format='png')

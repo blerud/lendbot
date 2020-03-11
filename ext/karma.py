@@ -4,7 +4,7 @@ import json
 import re
 import typing
 
-pattern = re.compile('(\+\+|--)\s*(\d+)?$')
+pattern = re.compile('(\+\+|--)$')
 
 class Karma(commands.Cog):
     _filename = 'karma.txt'
@@ -27,8 +27,8 @@ class Karma(commands.Cog):
             key = str(member.id)
             self.karma_dict[key] = self.karma_dict.get(key, 0) + karma_change
 
-        if recipients != 0:
-            # Write karma_dict to disk if changes
+        if len(recipients) != 0:
+            # Write karma_dict to disk
             self.write_to_file(self._filename, self.karma_dict)
 
             # Send out responses

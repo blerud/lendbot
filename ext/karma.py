@@ -27,17 +27,17 @@ class Karma(commands.Cog):
             key = str(member.id)
             self.karma_dict[key] = self.karma_dict.get(key, 0) + karma_change
 
-        # Write karma_dict to disk if changes
         if recipients != 0:
+            # Write karma_dict to disk if changes
             self.write_to_file(self._filename, self.karma_dict)
 
-        # Send out responses
-        response = []
-        sender = message.author.display_name
-        for member in recipients:
-            receiver = member.display_name
-            total = self.karma_dict[str(member.id)]
-            await message.channel.send("{} {}'d {} (now at {})".format(sender, karma_verb, receiver, total))
+            # Send out responses
+            sender = message.author.display_name
+            response = [
+                "{} {}'d {} (now at {})".format(sender, karma_verb, member.display_name, self.karma_dict[str(member.id)])
+                for member in recipients
+            ]
+            await message.channel.send('\n'.join(response))
 
     @commands.command()
     async def karma(self, ctx: discord.ext.commands.Context, member: discord.Member):

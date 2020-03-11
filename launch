@@ -1,4 +1,7 @@
 #!/bin/sh -x
 kill $(cat lendbot.pid)
+virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
 nohup venv/bin/python3 launcher.py &
 echo $! > lendbot.pid

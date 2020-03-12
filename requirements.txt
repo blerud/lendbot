@@ -1,8 +1,9 @@
+boto3
 discord-py
+matplotlib
 numpy
 pandas
 pandas_datareader
-matplotlib
-boto3
-yfinance
+schedule
 scipy
+yfinance

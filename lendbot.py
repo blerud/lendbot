@@ -9,6 +9,7 @@ from util import config
 log = logging.getLogger(__name__)
 
 extensions = [
+    'util.guild_tools'
     'ext.eightball',
     'ext.karma',
     'ext.maga',
@@ -18,8 +19,7 @@ extensions = [
     'ext.poker',
     'ext.role',
     'ext.stock',
-    'ext.vac',
-    'util.guild_tools'
+    'ext.vac'
 ]
 
 

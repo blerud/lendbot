@@ -1,13 +1,11 @@
-import schedule
 import discord
-from discord.ext.commands import Context
 from discord.channel import TextChannel
 from discord.ext import commands
+from discord.ext.commands import Context
 import requests
-import sys
+import schedule
 
-sys.path.append("..")
-import config
+from util import config, guild_tools
 
 client = None
 
@@ -84,9 +82,9 @@ class Vac(commands.Cog):
             pass
 
         if await check_vac_status(url):
-            await ctx.channel.send("<{}> is VAC banned!".format(url))
+            await ctx.channel.send("<{}> is VAC banned! {}".format(url, guild_tools.get_emoji_str('poggers')))
         else:
-            await ctx.channel.send("<{}> is not banned <:angry:{}>".format(url, config.angry_emoji))
+            await ctx.channel.send("<{}> is not banned {}".format(url, guild_tools.get_emoji_str('angry')))
 
     def write_vac(self):
         with open(config.vac_file, 'w+') as f:
@@ -96,7 +94,8 @@ class Vac(commands.Cog):
         response = []
         for url in self.urls:
             if await check_vac_status(url):
-                response.append("<{}> is VAC banned! Removing from checker.".format(url))
+                response.append(
+                    "<{}> is VAC banned! {} Removing from checker.".format(url, guild_tools.get_emoji_str('poggers')))
                 self.urls.remove(url)
 
         self.write_vac()
@@ -104,7 +103,7 @@ class Vac(commands.Cog):
         if len(response) != 0:
             await channel.send('\n'.join(response))
         elif send_if_no_results:
-            await channel.send("No banned players found <:angry:{}>".format(config.angry_emoji))
+            await channel.send("No banned players found {}".format(guild_tools.get_emoji_str('angry')))
 
 
 def setup(bot: discord.ext.commands.Bot):

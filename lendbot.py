@@ -1,12 +1,10 @@
-import discord
-from discord.ext import commands
-import asyncio
 import datetime
 import logging
-import re
 
-import config
+from discord.ext import commands
+
 import credentials
+from util import config
 
 log = logging.getLogger(__name__)
 
@@ -20,7 +18,8 @@ extensions = [
     'ext.poker',
     'ext.role',
     'ext.stock',
-    'ext.vac'
+    'ext.vac',
+    'util.guild_tools'
 ]
 
 

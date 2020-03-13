@@ -5,3 +5,5 @@ venv/
 
 *.pyc
 credentials.py
+vac.txt
+karma.txt

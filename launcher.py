@@ -1,9 +1,19 @@
-import logging
+import asyncio
 import logging.config
 import os
+import schedule
+import signal
+from threading import Thread
+import time
 
 import credentials
 from lendbot import Lendbot
+
+
+def run_scheduler():
+    schedule.run_pending()
+    asyncio.get_event_loop().call_later(0, run_scheduler)
+
 
 log = logging.getLogger()
 log.setLevel(logging.INFO)
@@ -20,4 +30,6 @@ ch.setLevel(logging.INFO)
 log.addHandler(ch)
 
 bot = Lendbot()
+
+asyncio.get_event_loop().call_later(10, run_scheduler)
 bot.run(credentials.token)

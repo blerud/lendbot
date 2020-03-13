@@ -11,16 +11,18 @@ import credentials
 log = logging.getLogger(__name__)
 
 extensions = [
-    'ext.maga',
-    'ext.stock',
-    'ext.role',
     'ext.eightball',
-    'ext.poker',
-    'ext.minecraft',
-    'ext.ping',
-    'ext.pin',
     'ext.karma',
+    'ext.maga',
+    'ext.minecraft',
+    'ext.pin',
+    'ext.ping',
+    'ext.poker',
+    'ext.role',
+    'ext.stock',
+    'ext.vac'
 ]
+
 
 class Lendbot(commands.Bot):
     def __init__(self):

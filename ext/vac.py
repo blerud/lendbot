@@ -3,7 +3,7 @@ from discord.channel import TextChannel
 from discord.ext import commands
 from discord.ext.commands import Context
 import requests
-import schedule
+import aioschedule as schedule
 
 from util import config, guild_tools
 
@@ -114,7 +114,7 @@ def setup(bot: discord.ext.commands.Bot):
 
     channel = bot.get_channel(int(config.default_channel))
 
-    def job():
-        vac.check_vac_status_and_send_results(channel, True)
+    async def job():
+        await vac.check_vac_status_and_send_results(channel, True)
 
     schedule.every().day.at("12:00").do(job)

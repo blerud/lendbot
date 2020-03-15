@@ -1,9 +1,9 @@
+aioschedule
 boto3
 discord-py
 matplotlib
 numpy
 pandas
 pandas_datareader
-schedule
 scipy
 yfinance

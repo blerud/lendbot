@@ -2,14 +2,14 @@ import asyncio
 import logging.config
 import os
 
-import schedule
+import aioschedule as schedule
 
 import credentials
 from lendbot import Lendbot
 
 
-def run_scheduler():
-    schedule.run_pending()
+async def run_scheduler():
+    await schedule.run_pending()
     asyncio.get_event_loop().call_later(1, run_scheduler)
 
 

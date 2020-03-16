@@ -1,6 +1,7 @@
 import asyncio
 import logging.config
 import os
+import traceback
 
 import aioschedule as schedule
 
@@ -8,9 +9,18 @@ import credentials
 from lendbot import Lendbot
 
 
+async def start_scheduler():
+    await asyncio.sleep(10)
+    await run_scheduler()
+
+
 async def run_scheduler():
-    await schedule.run_pending()
-    asyncio.get_event_loop().call_later(1, run_scheduler)
+    try:
+        await schedule.run_pending()
+    except Exception:
+        print(traceback.format_exc())
+    await asyncio.sleep(1)
+    asyncio.get_running_loop().create_task(run_scheduler())
 
 
 log = logging.getLogger()
@@ -29,5 +39,5 @@ log.addHandler(ch)
 
 bot = Lendbot()
 
-asyncio.get_event_loop().call_later(10, run_scheduler)
+asyncio.get_event_loop().create_task(start_scheduler())
 bot.run(credentials.token)

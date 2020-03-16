@@ -115,6 +115,6 @@ def setup(bot: discord.ext.commands.Bot):
     channel = bot.get_channel(int(config.default_channel))
 
     async def job():
-        await vac.check_vac_status_and_send_results(channel, True)
+        await vac.check_vac_status_and_send_results(channel, False)
 
     schedule.every().day.at("12:00").do(job)

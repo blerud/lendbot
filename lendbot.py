@@ -20,6 +20,7 @@ extensions = [
     'ext.role',
     'ext.stock',
     'ext.vac',
+    'ext.version',
 ]
 
 

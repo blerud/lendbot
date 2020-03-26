@@ -7,4 +7,3 @@ pandas
 pandas_datareader
 scipy
 yfinance
-requests

@@ -27,6 +27,6 @@ The default instance is configured with the following `startup-script`:
 ```bash
 #!/bin/bash
 cd /home/lendbot/lendbot
-suod -S -u lendbot git pull
+sudo -S -u lendbot git pull
 sudo -S -u lendbot ./launch
 ```

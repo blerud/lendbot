@@ -21,6 +21,7 @@ extensions = [
     'ext.stock',
     'ext.vac',
     'ext.version',
+    'ext.gpt',
 ]
 
 

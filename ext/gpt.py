@@ -1,28 +1,33 @@
 import requests
 
+GPT_ENDPOINT = 'https://transformer.huggingface.co/autocomplete/gpt2/large'
+GPT_PARAMS = {
+    'model_size': 'gpt2/large',
+    'top_p': 0.9,
+    'temperature': 1,
+    'max_time': 2
+}
+
 async def gpt(message):
     if message.author.bot:
         return
     if not message.content.startswith('.gpt'):
         return
 
-    message = message.content[5:]
-    if not message:
+    # format context as a question
+    context = message.content[5:]
+    if not context:
         return
-    if message[-1] != '?':
-        message += '?'
-    message = f'Q: {message}\n A: '
+    if context[-1] != '?':
+        context += '?'
+    context = f'Q: {context}\n A: '
 
-    json = {
-        'context': message,
-        'model_size': 'gpt2/large',
-        'top_p': 0.9,
-        'temperature': 1,
-        'max_time': 2
-    }
-    req = requests.post('https://transformer.huggingface.co/autocomplete/gpt2/large', json=json)
+    json = GPT_PARAMS.copy()
+    json['context'] = context
+    req = requests.post(GPT_ENDPOINT, json=json)
     req = req.json()
 
+    # choose first sentence that actually ends
     sentences = [x['value'] for x in req['sentences']]
     stopch = ['.', '!', '?', '\n']
     out = sentences[0]

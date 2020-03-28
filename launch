@@ -1,3 +1,3 @@
 #!/bin/bash -x
 venv/bin/pip3 install -r requirements.txt
-nohup venv/bin/python3 launcher.py & disown
+nohup venv/bin/python3 launcher.py &

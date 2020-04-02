@@ -25,7 +25,8 @@ async def gpt(message):
 
     json = GPT_PARAMS.copy()
     json['context'] = context
-    req = requests.post(GPT_ENDPOINT, json=json)
+    with message.channel.typing():
+        req = requests.post(GPT_ENDPOINT, json=json)
     req = req.json()
 
     # choose first sentence that actually ends

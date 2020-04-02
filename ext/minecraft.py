@@ -1,13 +1,13 @@
-import boto3
-import discord
-from discord.ext import commands
 import logging
-import os
 import time
+
+import boto3
+from discord.ext import commands
 
 import credentials
 
 log = logging.getLogger(__name__)
+
 
 @commands.command(name='mc')
 async def launch_server(ctx):
@@ -20,10 +20,11 @@ async def launch_server(ctx):
     message = manage_server(client)
     await ctx.send(message)
 
+
 def manage_server(client):
     returnString = 'ERROR'
     instanceIds = [credentials.INSTANCE_ID]
-    response = client.describe_instances(InstanceIds = instanceIds)
+    response = client.describe_instances(InstanceIds=instanceIds)
     reservations = response['Reservations']
     reservation = reservations[0]
     instances = reservation['Instances']
@@ -41,16 +42,17 @@ def manage_server(client):
             returnString = 'ERROR'
     return returnString
 
+
 def start_server(client):
     returnString = 'ERROR'
     instanceIds = [credentials.INSTANCE_ID]
-    response = client.start_instances(InstanceIds = instanceIds)
+    response = client.start_instances(InstanceIds=instanceIds)
     stateCode = 0
 
     while not (stateCode == 16):
         time.sleep(3)
 
-        response = client.describe_instances(InstanceIds = instanceIds)
+        response = client.describe_instances(InstanceIds=instanceIds)
         reservations = response['Reservations']
         reservation = reservations[0]
         instances = reservation['Instances']
@@ -61,6 +63,7 @@ def start_server(client):
     ipAddress = instance['PublicIpAddress']
     returnString = 'Server is starting, this may take a few minutes.\n' + ipAddress
     return returnString
+
 
 def setup(bot):
     bot.add_command(launch_server)

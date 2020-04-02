@@ -1,7 +1,9 @@
 import asyncio
+import typing
+
 import discord
 from discord.ext import commands
-import typing
+
 
 class Ping(commands.Cog):
     def __init__(self, bot):
@@ -22,6 +24,7 @@ class Ping(commands.Cog):
             return int(delay_str[:-1])
         else:
             return int(delay_str[:-1]) * 60
+
 
 def setup(bot):
     bot.add_cog(Ping(bot))

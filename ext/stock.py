@@ -10,6 +10,7 @@ log = logging.getLogger(__name__)
 
 tickerpattern = re.compile('\$([A-Za-z\.\^=]+)')
 
+
 async def check_stock(message):
     if message.author.bot:
         return
@@ -25,22 +26,24 @@ async def check_stock(message):
         except Exception as e:
             log.warning('failed stock query \"%s\", %s', msg, str(e))
 
+
 @commands.command()
 async def stock(ctx, *args):
     if len(args) == 0:
         return
-    
+
     ticker = args[0]
     symbolmatch = tickerpattern.match(ticker)
     if symbolmatch:
         try:
             symbol = symbolmatch.group(1)
             image = market.get_intraday_graph(symbol)
-            f = discord.File(image, filename=symbol+'.png')
+            f = discord.File(image, filename=symbol + '.png')
             image.close()
             await ctx.send(file=f)
         except Exception as e:
             log.warning('failed stock query \"%s\", %s', ticker, str(e))
+
 
 def setup(bot):
     bot.add_listener(check_stock, 'on_message')

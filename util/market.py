@@ -1,13 +1,12 @@
 from datetime import date, datetime, timedelta
-import pytz
 from io import BytesIO
 
 import matplotlib.colors as mcolors
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
-import numpy as np
 import pandas as pd
+import pytz
 import yfinance as yf
 
 fill_green = (0.5, 1, 0.5)

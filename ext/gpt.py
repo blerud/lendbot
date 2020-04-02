@@ -23,10 +23,11 @@ async def gpt(message):
         context += '?'
     context = f'Q: {context}\n A: '
 
+    await message.channel.trigger_typing()
+    
     json = GPT_PARAMS.copy()
     json['context'] = context
-    with message.channel.typing():
-        req = requests.post(GPT_ENDPOINT, json=json)
+    req = requests.post(GPT_ENDPOINT, json=json)
     req = req.json()
 
     # choose first sentence that actually ends

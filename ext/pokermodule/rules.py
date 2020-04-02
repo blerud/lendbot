@@ -10,20 +10,21 @@ SUITS = ('♠', '♥', '♦', '♣')
 RankInfo = namedtuple('RankInfo', ['name', 'plural', 'value'])
 
 RANK_INFO = {
-    "2":  RankInfo("deuce", "deuces", 0),
-    "3":  RankInfo("three", "threes", 1),
-    "4":  RankInfo("four",  "fours",  2),
-    "5":  RankInfo("five",  "fives",  3),
-    "6":  RankInfo("six",   "sixes",  4),
-    "7":  RankInfo("seven", "sevens", 5),
-    "8":  RankInfo("eight", "eights", 6),
-    "9":  RankInfo("nine",  "nines",  7),
-    "10": RankInfo("ten",   "tens",   8),
-    "J":  RankInfo("jack",  "jacks",  9),
-    "Q":  RankInfo("queen", "queens", 10),
-    "K":  RankInfo("king",  "kings",  11),
-    "A":  RankInfo("ace",   "aces",   12),
+    "2": RankInfo("deuce", "deuces", 0),
+    "3": RankInfo("three", "threes", 1),
+    "4": RankInfo("four", "fours", 2),
+    "5": RankInfo("five", "fives", 3),
+    "6": RankInfo("six", "sixes", 4),
+    "7": RankInfo("seven", "sevens", 5),
+    "8": RankInfo("eight", "eights", 6),
+    "9": RankInfo("nine", "nines", 7),
+    "10": RankInfo("ten", "tens", 8),
+    "J": RankInfo("jack", "jacks", 9),
+    "Q": RankInfo("queen", "queens", 10),
+    "K": RankInfo("king", "kings", 11),
+    "A": RankInfo("ace", "aces", 12),
 }
+
 
 # An enumeration for ranking poker hands
 @total_ordering
@@ -37,10 +38,12 @@ class HandRanking(Enum):
     FULL_HOUSE = 7
     FOUR_OF_KIND = 8
     STRAIGHT_FLUSH = 9
+
     # Royal flush is just a special case of the straight flush
 
     def __lt__(self, other):
         return self.value < other.value
+
 
 # A simple class representing a card
 @total_ordering
@@ -66,6 +69,7 @@ class Card:
     @property
     def plural(self) -> str:
         return RANK_INFO[self.rank].plural
+
 
 # A class for representing a 5-card hand, and allowing for the easy comparison
 # of hands
@@ -199,17 +203,17 @@ class Hand:
             dups[0], dups[1] = dups[1], dups[0]
         return dups
 
+
 # Returns the best possible 5-card hand that can be made from the five
 # community cards and a player's two hole cards
 def best_possible_hand(public: List[Card], private: Tuple[Card, Card]) -> Hand:
-    return max(Hand(list(hand))
-               for hand in combinations(tuple(public) + private, 5))
+    return max(Hand(list(hand)) for hand in combinations(tuple(public) + private, 5))
+
 
 # A class for representing a simple, randomized deck that can be drawn from
 class Deck:
     def __init__(self):
-        self.cards = [Card(suit, rank) for suit in SUITS
-                                       for rank in RANK_INFO]
+        self.cards = [Card(suit, rank) for suit in SUITS for rank in RANK_INFO]
         random.shuffle(self.cards)
 
     def draw(self) -> Card:

@@ -8,7 +8,7 @@ from util import market
 
 log = logging.getLogger(__name__)
 
-tickerpattern = re.compile('\$([A-Za-z\.\^=]+)')
+tickerpattern = re.compile(r'\$([A-Za-z.^=]+)')
 
 
 async def check_stock(message):

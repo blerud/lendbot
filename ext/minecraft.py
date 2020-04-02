@@ -15,7 +15,7 @@ async def launch_server(ctx):
         'ec2',
         aws_access_key_id=credentials.ACCESS_KEY,
         aws_secret_access_key=credentials.SECRET_KEY,
-        region_name=credentials.EC2_REGION
+        region_name=credentials.EC2_REGION,
     )
     message = manage_server(client)
     await ctx.send(message)

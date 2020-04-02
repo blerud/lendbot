@@ -1,34 +1,16 @@
 import numpy as np
 import scipy.linalg
 
-NEGATIVE = [
-    "Don't count on it.",
-    "My reply is no.",
-    "My sources say no.",
-    "Outlook not so good.",
-    "Very doubtful."
-]
+NEGATIVE = ["Don't count on it.", "My reply is no.", "My sources say no.", "Outlook not so good.", "Very doubtful."]
 NEUTRAL = [
     "Reply hazy, try again later.",
     "Ask again later.",
     "Better not tell you now.",
     "Cannot predict now.",
-    "Concentrate and ask again."
+    "Concentrate and ask again.",
 ]
-SLIGHT_POSITIVE = [
-    "As I see it, yes.",
-    "Most likely.",
-    "Outlook good.",
-    "Yes.",
-    "Signs point to yes."
-]
-STRONG_POSITIVE = [
-    "It is certain.",
-    "It is decidely so.",
-    "Without a doubt.",
-    "Yes - definitely.",
-    "You may rely on it."
-]
+SLIGHT_POSITIVE = ["As I see it, yes.", "Most likely.", "Outlook good.", "Yes.", "Signs point to yes."]
+STRONG_POSITIVE = ["It is certain.", "It is decidely so.", "Without a doubt.", "Yes - definitely.", "You may rely on it."]
 
 
 def random_quantum(x):

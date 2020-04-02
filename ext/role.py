@@ -10,19 +10,21 @@ log = logging.getLogger(__name__)
 @commands.group()
 async def role(ctx):
     if ctx.message.content.strip() == '.role':
-        await ctx.send('''```.role create [role]
+        await ctx.send(
+            '''```.role create [role]
 .role list
 .role rename [role] [newrole]
 .role delete [role]
 .role listusers [role]
 .role addusers [role] [users]...
-.role delusers [role] [users]...```''')
+.role delusers [role] [users]...```'''
+        )
 
 
 @role.command(name='list')
 async def listusers(ctx):
     guild = ctx.guild
-    if guild != None:
+    if guild is not None:
         msg = 'Roles in this server:\n```'
         for role in guild.roles:
             if role.name == '@everyone':
@@ -37,8 +39,7 @@ async def create_role(ctx, role: str):
     guild = ctx.guild
 
     try:
-        await guild.create_role(name=role, mentionable=True,
-                                colour=discord.Colour(0).from_hsv(random.random(), 0.6, 0.7))
+        await guild.create_role(name=role, mentionable=True, colour=discord.Colour(0).from_hsv(random.random(), 0.6, 0.7))
         await ctx.send('Created role \"{}\"'.format(role))
     except Exception as e:
         log.warning('failed create role \"%s\", %s', role, str(e))

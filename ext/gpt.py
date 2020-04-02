@@ -1,12 +1,7 @@
 import requests
 
 GPT_ENDPOINT = 'https://transformer.huggingface.co/autocomplete/gpt2/large'
-GPT_PARAMS = {
-    'model_size': 'gpt2/large',
-    'top_p': 0.9,
-    'temperature': 1,
-    'max_time': 2
-}
+GPT_PARAMS = {'model_size': 'gpt2/large', 'top_p': 0.9, 'temperature': 1, 'max_time': 2}
 
 
 async def gpt(message):
@@ -36,7 +31,7 @@ async def gpt(message):
         match = [sentence.find(ch) for ch in stopch]
         match = [x for x in match if x != -1]
         if match:
-            out = sentence[:min(match)]
+            out = sentence[: min(match)]
             break
 
     await message.channel.send(out)

@@ -1,9 +1,9 @@
+import aioschedule as schedule
 import discord
+import requests
 from discord.channel import TextChannel
 from discord.ext import commands
 from discord.ext.commands import Context
-import requests
-import aioschedule as schedule
 
 from util import config, guild_tools
 

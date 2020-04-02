@@ -8,6 +8,7 @@ GPT_PARAMS = {
     'max_time': 2
 }
 
+
 async def gpt(message):
     if message.author.bot:
         return
@@ -39,6 +40,7 @@ async def gpt(message):
             break
 
     await message.channel.send(out)
+
 
 def setup(bot):
     bot.add_listener(gpt, 'on_message')

@@ -30,11 +30,13 @@ STRONG_POSITIVE = [
     "You may rely on it."
 ]
 
+
 def random_quantum(x):
     arr = np.array([ord(ch) for ch in x.lower()])
     science = scipy.linalg.circulant(arr)[:5].prod(axis=0)
     quantum = (science % 42069 == 25266).any()
     return quantum
+
 
 async def eightball(message):
     if message.author.bot:
@@ -52,6 +54,7 @@ async def eightball(message):
         choices = NEGATIVE + NEUTRAL + SLIGHT_POSITIVE + STRONG_POSITIVE
     out = np.random.choice(choices)
     await message.channel.send(out)
+
 
 def setup(bot):
     bot.add_listener(eightball, 'on_message')

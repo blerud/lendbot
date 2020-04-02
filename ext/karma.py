@@ -1,10 +1,12 @@
-import discord
-from discord.ext import commands
 import json
 import re
 import typing
 
+import discord
+from discord.ext import commands
+
 pattern = re.compile('(\+\+|--)$')
+
 
 class Karma(commands.Cog):
     _filename = 'karma.txt'
@@ -34,7 +36,8 @@ class Karma(commands.Cog):
             # Send out responses
             sender = message.author.display_name
             response = [
-                "{} {}'d {} (now at {})".format(sender, karma_verb, member.display_name, self.karma_dict[str(member.id)])
+                "{} {}'d {} (now at {})".format(sender, karma_verb, member.display_name,
+                                                self.karma_dict[str(member.id)])
                 for member in recipients
             ]
             await message.channel.send('\n'.join(response))
@@ -55,6 +58,7 @@ class Karma(commands.Cog):
     def write_to_file(self, filename: str, karma: typing.Dict[str, int]) -> None:
         with open(filename, 'w+') as f:
             json.dump(karma, f)
+
 
 def setup(bot: discord.ext.commands.Bot):
     bot.add_cog(Karma())

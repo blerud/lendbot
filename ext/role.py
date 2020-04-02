@@ -1,9 +1,11 @@
-import discord
-from discord.ext import commands
 import logging
 import random
 
+import discord
+from discord.ext import commands
+
 log = logging.getLogger(__name__)
+
 
 @commands.group()
 async def role(ctx):
@@ -15,6 +17,7 @@ async def role(ctx):
 .role listusers [role]
 .role addusers [role] [users]...
 .role delusers [role] [users]...```''')
+
 
 @role.command(name='list')
 async def listusers(ctx):
@@ -28,16 +31,18 @@ async def listusers(ctx):
         msg += '```'
         await ctx.send(msg)
 
+
 @role.command(name='create')
 async def create_role(ctx, role: str):
     guild = ctx.guild
 
     try:
         await guild.create_role(name=role, mentionable=True,
-            colour=discord.Colour(0).from_hsv(random.random(), 0.6, 0.7))
+                                colour=discord.Colour(0).from_hsv(random.random(), 0.6, 0.7))
         await ctx.send('Created role \"{}\"'.format(role))
     except Exception as e:
         log.warning('failed create role \"%s\", %s', role, str(e))
+
 
 @role.command(name='rename')
 async def rename_role(ctx, role: discord.Role, newrole: str):
@@ -49,6 +54,7 @@ async def rename_role(ctx, role: discord.Role, newrole: str):
     except Exception as e:
         log.warning('failed edit role \"%s\" to \"%s\", %s', role, newrole, str(e))
 
+
 @role.command(name='delete')
 async def delete_role(ctx, role: discord.Role):
     try:
@@ -59,6 +65,7 @@ async def delete_role(ctx, role: discord.Role):
     except Exception as e:
         log.warning('failed delete role \"%s\", %s', role, str(e))
 
+
 @role.command(name='listusers')
 async def list_users(ctx, role: discord.Role):
     try:
@@ -66,6 +73,7 @@ async def list_users(ctx, role: discord.Role):
         await ctx.send('Users in role \"{}\": {}'.format(role, ', '.join(members)))
     except Exception as e:
         log.warning('failed retrieve users of role \"%s\"', role, str(e))
+
 
 @role.command(name='addusers')
 async def add_users(ctx, role: discord.Role, members: commands.Greedy[discord.Member]):
@@ -76,6 +84,7 @@ async def add_users(ctx, role: discord.Role, members: commands.Greedy[discord.Me
     except Exception as e:
         log.warning('failed add role \"%s\" to %d members, %s', role, len(members), str(e))
 
+
 @role.command(name='delusers')
 async def del_users(ctx, role: discord.Role, members: commands.Greedy[discord.Member]):
     try:
@@ -84,6 +93,7 @@ async def del_users(ctx, role: discord.Role, members: commands.Greedy[discord.Me
         await ctx.send('Removed users {} from \"{}\"'.format(list(map(lambda x: x.name, members)), role))
     except Exception as e:
         log.warning('failed remove role \"%s\" from %d members, %s', role, len(members), str(e))
+
 
 def setup(bot):
     bot.add_command(role)

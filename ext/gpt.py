@@ -18,6 +18,8 @@ async def gpt(message):
         context += '?'
     context = f'Q: {context}\n A: '
 
+    await message.channel.trigger_typing()
+
     json = GPT_PARAMS.copy()
     json['context'] = context
     req = requests.post(GPT_ENDPOINT, json=json)

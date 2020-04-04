@@ -6,7 +6,7 @@ from discord.ext import commands
 
 @commands.command()
 async def version(ctx):
-    version = subprocess.run(['git', 'rev-parse', 'HEAD'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    version = subprocess.run(['git', 'show', '-s', '--format=%h %s'], stdout=subprocess.PIPE).stdout.decode('utf-8')
     await ctx.channel.send(version.strip())
 
 

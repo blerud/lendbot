@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from io import BytesIO
 
 import matplotlib.colors as mcolors
@@ -22,8 +22,6 @@ def get_stock_price(symbol):
 
 def get_intraday_graph(symbol):
     symbol = symbol.upper()
-    now = datetime.now()
-    today = date.today()
 
     # Dataframe
     df = yf.download(symbol, datetime.now() - timedelta(days=7), interval='5m')
@@ -46,12 +44,7 @@ def get_intraday_graph(symbol):
     graph_delta = graph_max - graph_min
     graph_max_margin = graph_max + 0.1 * graph_delta
     graph_min_margin = max(0, graph_min - 0.1 * graph_delta)
-    plt.hlines(
-        (graph_max_margin, graph_min_margin),
-        df.first_valid_index(),
-        df.last_valid_index(),
-        linestyles='solid'
-    )
+    plt.hlines((graph_max_margin, graph_min_margin), df.first_valid_index(), df.last_valid_index(), linestyles='solid')
 
     plt.hlines(previous_close, df.first_valid_index(), df.last_valid_index(), linestyles='dotted')
     plt.fill_between(close.index, graph_min_margin, close, alpha=0.5, color=fill_green if bull else fill_red)

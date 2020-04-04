@@ -1,10 +1,14 @@
 aioschedule
+black
 boto3
-discord-py
+discord.py
+flake8
 matplotlib
 numpy
 pandas
 pandas_datareader
+pytest
+pre-commit
 scipy
 yfinance
 requests

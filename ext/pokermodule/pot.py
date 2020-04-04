@@ -3,6 +3,7 @@ from typing import Dict, List, Set
 from ext.pokermodule.player import Player
 from ext.pokermodule.rules import best_possible_hand, Card, Hand
 
+
 # A class for representing one pot or side pot
 class Pot:
     def __init__(self, players: Set[Player]) -> None:
@@ -40,9 +41,9 @@ class Pot:
     # Returns a new side pot, for when the bet overflows what can be contained
     # in this pot
     def make_side_pot(self):
-        excluded = {player for player in self.players
-                    if player.max_bet == self.max_bet}
+        excluded = {player for player in self.players if player.max_bet == self.max_bet}
         return Pot(self.players - excluded)
+
 
 # A class to manage pots and side pots and who is in each pot and how much
 # each player has bet so far
@@ -83,8 +84,7 @@ class PotManager:
 
     def debug_print(self):
         for i, pot in enumerate(self.pots):
-            print(f"Pot #{i}. Bet: ${pot.cur_bet} (Max: {pot.max_bet}). "
-                  f"Amount: ${pot.amount}.")
+            print(f"Pot #{i}. Bet: ${pot.cur_bet} (Max: {pot.max_bet}). " f"Amount: ${pot.amount}.")
             for player in pot.players:
                 print(f"{player.name}: {player.balance}")
             print("-----")
@@ -171,5 +171,4 @@ class PotManager:
         for player in self.pots[-1].players:
             player.placed_bet = False
             player.cur_bet = 0
-        self.pots[-1].max_bet = min(player.max_bet
-                                    for player in self.pots[-1].players)
+        self.pots[-1].max_bet = min(player.max_bet for player in self.pots[-1].players)

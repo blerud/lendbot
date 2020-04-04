@@ -18,13 +18,14 @@ EmbedFooter = namedtuple("EmbedFooter", ["text"])
 Option = namedtuple("Option", ["description", "default"])
 
 GAME_OPTIONS: Dict[str, Option] = {
-    "blind":  Option("The current price of the small blind", 100),
+    "blind": Option("The current price of the small blind", 100),
     "buy-in": Option("The amount of money all players start out with", 10000),
-    "raise-delay": Option("The number of minutes before blinds double",  0),
+    "raise-delay": Option("The number of minutes before blinds double", 0),
     "starting-blind": Option("The starting price of the small blind", 100),
     "auto-deal": Option("Automatically deal cards after a round", 1),
-    "tournament": Option("Tournament mode (no buy-ins during the game)", 0)
+    "tournament": Option("Tournament mode (no buy-ins during the game)", 0),
 }
+
 
 # An enumeration that says what stage of the game we've reached
 class GameState(Enum):
@@ -43,13 +44,13 @@ class GameState(Enum):
     # We just dealt the river
     RIVER_DEALT = 7
 
+
 # A class that keeps track of all the information having to do with a game
 class Game:
     def __init__(self) -> None:
         self.new_game()
         # Set the game options to the defaults
-        self.options = {key: value.default
-                        for key, value in GAME_OPTIONS.items()}
+        self.options = {key: value.default for key, value in GAME_OPTIONS.items()}
 
     def new_game(self) -> None:
         self.state = GameState.NO_GAME
@@ -231,9 +232,11 @@ class Game:
 
     # Returns messages telling the current player their options
     def cur_options(self) -> List[object]:
-        messages = [self.current_player.user.mention,
-                    EmbedTitle(f"It is {self.current_player.user.name}'s turn."),
-                    EmbedDescription(f"Pot: ${self.pot.value} | Current bet: ${self.pot.cur_bet}")]
+        messages = [
+            self.current_player.user.mention,
+            EmbedTitle(f"It is {self.current_player.user.name}'s turn."),
+            EmbedDescription(f"Pot: ${self.pot.value} | Current bet: ${self.pot.cur_bet}"),
+        ]
 
         # Print chip count
         for player in self.players:
@@ -304,8 +307,13 @@ class Game:
         while len(self.shared_cards) < 5:
             self.shared_cards.append(self.cur_deck.draw())
 
-        messages = [EmbedField("Betting has concluded. Dealing and revealing the remaining cards:",
-            "  ".join(str(card) for card in self.shared_cards), False)]
+        messages = [
+            EmbedField(
+                "Betting has concluded. Dealing and revealing the remaining cards:",
+                "  ".join(str(card) for card in self.shared_cards),
+                False,
+            )
+        ]
 
         winners = self.pot.get_winners(self.shared_cards)
 

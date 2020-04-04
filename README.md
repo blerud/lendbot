@@ -1,29 +1,51 @@
 lendbot
 =======
+### Setup
+Set up your environment:
+```shell script
+# Create virtualenv
+pip install virtualenv
+virtualenv venv
 
-## Setup
-1. Install virtualenv if you don't have it: `pip3 install virtualenv`
+# Activate virtualenv
+source venv/bin/activate # Unix
+venv/Scripts/activate # Windows
 
-2. Initialize virtualenv in the repo: `virtualenv venv`
+# Install requirements
+pip install -r requirements.txt
 
-3. Activate virtualenv: `source venv/bin/activate` on Unix or `venv/Scripts/activate` on Windows
+# Set up pre-commit hooks
+pre-commit install
+```
+Get your app's client ID and secret from https://discordapp.com/developers/applications,
+and create `credentials.py`:
+```python
+client_id = "000000000000000000"
+token = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+```
 
-4. Install dependencies: `pip3 install -r requirements.txt`
+### Running locally
+```shell script
+# Activate virtualenv
+source venv/bin/activate # Unix
+venv/Scripts/activate # Windows
 
-5. Create `credentials.py` and create fields `client_id` and `token`.
+# Run launcher
+python launcher.py
+```
 
-*Deactivate virtualenv with `deactivate` once you're done.*
+### Development
+`lendbot` uses [black](https://black.readthedocs.io/en/stable/index.html) to lint files.
+To make your builds pass:
+* Make sure you ran `pre-commit install` in the root `lendbot` directory.
+* You can configure your editor to run `black` automatically:
+see [here](https://black.readthedocs.io/en/stable/editor_integration.html)
 
-## Running
-1. Activate virtualenv: `source venv/bin/activate` on Unix or `venv/Scripts/activate` on Windows
-
-2. Run the launcher: `./launch`
-
-## Continuous deployment
+### Continuous deployment
 GitHub Actions is configured to reboot a Google Cloud instance `instance-1`,
 on zone `us-centra1-c` on project `lendbot` on a push to `master`.
 
-The default instance is configured with the following `startup-script`:
+Configure the default instance with the following `startup-script`:
 ```bash
 #!/bin/bash
 cd /home/lendbot/lendbot

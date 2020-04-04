@@ -5,7 +5,7 @@ import typing
 import discord
 from discord.ext import commands
 
-pattern = re.compile('(\+\+|--)$')
+pattern = re.compile(r'(\+\+|--)$')
 
 
 class Karma(commands.Cog):
@@ -17,7 +17,7 @@ class Karma(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         match = pattern.search(message.content)
-        if match == None:
+        if match is None:
             return
 
         # Update karma_dict
@@ -36,8 +36,7 @@ class Karma(commands.Cog):
             # Send out responses
             sender = message.author.display_name
             response = [
-                "{} {}'d {} (now at {})".format(sender, karma_verb, member.display_name,
-                                                self.karma_dict[str(member.id)])
+                "{} {}'d {} (now at {})".format(sender, karma_verb, member.display_name, self.karma_dict[str(member.id)])
                 for member in recipients
             ]
             await message.channel.send('\n'.join(response))
@@ -52,7 +51,7 @@ class Karma(commands.Cog):
         try:
             with open(filename, 'r') as f:
                 return json.load(f)
-        except FileNotFoundError as e:
+        except FileNotFoundError:
             return {}
 
     def write_to_file(self, filename: str, karma: typing.Dict[str, int]) -> None:

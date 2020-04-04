@@ -1,6 +1,6 @@
 aioschedule
 boto3
-discord-py
+discord.py
 matplotlib
 numpy
 pandas

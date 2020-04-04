@@ -2,6 +2,7 @@ import asyncio
 import logging.config
 import os
 import traceback
+from datetime import datetime
 
 import aioschedule as schedule
 
@@ -28,7 +29,8 @@ log.setLevel(logging.INFO)
 
 if not os.path.exists('logs'):
     os.makedirs('logs')
-fh = logging.FileHandler(filename='logs/lendbot.log')
+filename = datetime.now().strftime('logs/lendbot_%Y.%m.%d-%H.%M.%S.log')
+fh = logging.FileHandler(filename=filename)
 formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
 fh.setFormatter(formatter)
 log.addHandler(fh)

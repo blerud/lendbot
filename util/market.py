@@ -34,8 +34,8 @@ def get_intraday_graph(symbol):
     close = df['Close']
     bull = close[-1] >= previous_close
     ax = close.plot(colormap=market_green if bull else market_red)
-    ax.xaxis.set_major_formatter(mdates.DateFormatter("%I %p:%M", tz=pytz.timezone('America/New_York')))
-    ax.xaxis.set_minor_formatter(mdates.DateFormatter("%I %p:%M", tz=pytz.timezone('America/New_York')))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%I:%M %p", tz=pytz.timezone('America/New_York')))
+    ax.xaxis.set_minor_formatter(mdates.DateFormatter("%I:%M %p", tz=pytz.timezone('America/New_York')))
     ax.yaxis.set_major_formatter(mticker.FormatStrFormatter('$%1.2f'))
     ax.set_xlabel(None)
 

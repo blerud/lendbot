@@ -33,7 +33,7 @@ class Vac(commands.Cog):
     async def list0(self, ctx: Context):
         """List current profiles to be checked"""
         if len(self.urls) != 0:
-            await ctx.channel.send('\n'.join(['{}. <{}>'.format(i, url) for i, url in enumerate(self.urls)]))
+            await ctx.channel.send('\n'.join(['{}. <{}>'.format(i + 1, url) for i, url in enumerate(self.urls)]))
         else:
             await ctx.channel.send("No profiles registered to checker.")
 

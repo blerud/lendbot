@@ -132,7 +132,7 @@ def raise_bet(game: Game, message: discord.Message) -> List[str]:
 
     tokens = message.content.split()
     if len(tokens) < 3:
-        return [f"Please follow `.p raise` with the amount that you would like to raise it by."]
+        return ["Please follow `.p raise` with the amount that you would like to raise it by."]
     try:
         amount = int(tokens[2])
         if amount < 0:

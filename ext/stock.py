@@ -20,9 +20,15 @@ async def check_stock(message):
         try:
             symbol = tickerpattern.match(msg)
             if symbol:
-                price = market.get_stock_price(symbol.group(1))
+                symbol_str = symbol.group(1)
+                price = market.get_stock_price(symbol_str)
+                prev_close = market.get_last_close_price(symbol_str)
+
+                change_percent = (price - prev_close) / prev_close * 100
+                change_sign = '+' if change_percent > 0 else '-'
+
                 pricefmt = '{0:,.2f}'.format(price)
-                await message.channel.send('$' + str(pricefmt))
+                await message.channel.send(f'${pricefmt} ({change_sign}{abs(change_percent):.2f}%)')
         except Exception as e:
             log.warning('failed stock query \"%s\", %s', msg, str(e))
 

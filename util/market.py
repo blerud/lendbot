@@ -15,6 +15,10 @@ market_green = mcolors.LinearSegmentedColormap.from_list('market_green', [(0, 1,
 market_red = mcolors.LinearSegmentedColormap.from_list('market_red', [(1, 0, 0), (1, 0, 0)])
 
 
+def get_last_close_price(symbol):
+    return yf.Ticker(symbol).info['previousClose']
+
+
 def get_stock_price(symbol):
     info = yf.Ticker(symbol).info
     return (info['ask'] + info['bid']) / 2

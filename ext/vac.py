@@ -1,7 +1,8 @@
+import json
+
 import aioschedule as schedule
 import discord
 import requests
-from discord.channel import TextChannel
 from discord.ext import commands
 from discord.ext.commands import Context
 
@@ -19,8 +20,11 @@ class Vac(commands.Cog):
     def __init__(self):
         try:
             with open(config.vac_file, 'r') as f:
-                self.urls = [url for url in f]
+                vac_json = json.load(f)
+                self.banned_urls = vac_json['banned_urls']
+                self.urls = vac_json['urls']
         except FileNotFoundError:
+            self.banned_urls = []
             self.urls = []
 
     @commands.group()
@@ -37,6 +41,14 @@ class Vac(commands.Cog):
         else:
             await ctx.channel.send("No profiles registered to checker.")
 
+    @vac.command(name='banned')
+    async def banned(self, ctx: Context):
+        """List profiles that have been banned."""
+        if len(self.urls) != 0:
+            await ctx.channel.send('\n'.join(['{}. <{}>'.format(i + 1, url) for i, url in enumerate(self.banned_urls)]))
+        else:
+            await ctx.channel.send("No profiles have been banned.")
+
     @vac.command(name='add')
     async def add(self, ctx: Context, url: str):
         """Add a profile to the checker"""
@@ -52,9 +64,9 @@ class Vac(commands.Cog):
         """Remove a profile to the checker by index or url"""
         try:
             index = int(url)
-            if 0 <= index < len(self.urls):
-                removed_url = self.urls[index]
-                del self.urls[index]
+            if 0 < index <= len(self.urls):
+                removed_url = self.urls[index - 1]
+                del self.urls[index - 1]
                 self.write_vac()
                 await ctx.channel.send("Removed <{}> from checker.".format(removed_url))
             else:
@@ -72,8 +84,8 @@ class Vac(commands.Cog):
         """Manually check a profile for a ban. Can provide an index or a url."""
         try:
             index = int(url)
-            if 0 <= index < len(self.urls):
-                url = self.urls[index]
+            if 0 < index <= len(self.urls):
+                url = self.urls[index - 1]
             else:
                 await ctx.channel.send("{} is not a valid index.".format(index))
                 return
@@ -86,19 +98,22 @@ class Vac(commands.Cog):
             await ctx.channel.send("<{}> is not banned {}".format(url, guild_tools.get_emoji_str('angry')))
 
     def write_vac(self):
-        with open(config.vac_file, 'w+') as f:
-            f.writelines(self.urls)
+        with open(config.vac_file, 'w') as f:
+            json.dump({'banned_urls': self.banned_urls, 'urls': self.urls}, f)
 
-    async def check_vac_status_and_send_results(self, channel: TextChannel, send_if_no_results: bool):
+    async def check_vac_status_and_send_results(self, send_if_no_results: bool):
         response = []
         for url in self.urls:
             if await check_vac_status(url):
                 response.append(
-                    "<{}> is VAC banned! {} Removing from checker.".format(url, guild_tools.get_emoji_str('poggers'))
+                    "@csgo <{}> is VAC banned! {} Removing from checker.".format(url, guild_tools.get_emoji_str('poggers'))
                 )
                 self.urls.remove(url)
+                self.banned_urls.append(url)
 
         self.write_vac()
+
+        channel = client.get_channel(int(config.default_channel))
 
         if len(response) != 0:
             await channel.send('\n'.join(response))
@@ -112,9 +127,7 @@ def setup(bot: discord.ext.commands.Bot):
     vac = Vac()
     bot.add_cog(vac)
 
-    channel = bot.get_channel(int(config.default_channel))
-
     async def job():
-        await vac.check_vac_status_and_send_results(channel, False)
+        await vac.check_vac_status_and_send_results(False)
 
-    schedule.every().day.at("12:00").do(job)
+    schedule.every().hour.do(job)

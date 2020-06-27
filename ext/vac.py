@@ -1,7 +1,6 @@
 import aioschedule as schedule
 import discord
 import requests
-from discord.channel import TextChannel
 from discord.ext import commands
 from discord.ext.commands import Context
 
@@ -89,16 +88,18 @@ class Vac(commands.Cog):
         with open(config.vac_file, 'w+') as f:
             f.writelines(self.urls)
 
-    async def check_vac_status_and_send_results(self, channel: TextChannel, send_if_no_results: bool):
+    async def check_vac_status_and_send_results(self, send_if_no_results: bool):
         response = []
         for url in self.urls:
             if await check_vac_status(url):
                 response.append(
-                    "<{}> is VAC banned! {} Removing from checker.".format(url, guild_tools.get_emoji_str('poggers'))
+                    "@csgo <{}> is VAC banned! {} Removing from checker.".format(url, guild_tools.get_emoji_str('poggers'))
                 )
                 self.urls.remove(url)
 
         self.write_vac()
+
+        channel = client.get_channel(int(config.default_channel))
 
         if len(response) != 0:
             await channel.send('\n'.join(response))
@@ -112,9 +113,7 @@ def setup(bot: discord.ext.commands.Bot):
     vac = Vac()
     bot.add_cog(vac)
 
-    channel = bot.get_channel(int(config.default_channel))
-
     async def job():
-        await vac.check_vac_status_and_send_results(channel, False)
+        await vac.check_vac_status_and_send_results(False)
 
-    schedule.every().day.at("12:00").do(job)
+    schedule.every().hour.do(job)

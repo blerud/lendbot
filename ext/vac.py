@@ -104,15 +104,20 @@ class Vac(commands.Cog):
 
     async def check_vac_status_and_send_results(self, channel: TextChannel = None, send_if_no_results: bool = False):
         response = []
+        banned = []
         for url in self.urls:
             if await check_vac_status(url):
+                csgo_mention = '@&454124197048745996'
+                poggers = 'guild_tools.get_emoji_str('poggers')'
                 response.append(
-                    "<@&454124197048745996> <{}> is VAC banned! {} Removing from checker.".format(
-                        url, guild_tools.get_emoji_str('poggers'))
+                    "<{}> <{}> is VAC banned! {} Removing from checker.".format(csgo_mention, url, poggers)
                 )
-                self.urls.remove(url)
+                banned.append(url)
                 self.banned_urls.append(url)
-
+        
+        for url in banned:
+            self.urls.remove(url)
+        
         self.write_vac()
 
         if channel is None:

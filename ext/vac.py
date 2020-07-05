@@ -20,10 +20,10 @@ async def check_vac_status(url):
 class Vac(commands.Cog):
     def __init__(self):
         try:
-            with open(config.vac_file, 'r') as f:
+            with open(config.vac_file, "r") as f:
                 vac_json = json.load(f)
-                self.banned_urls = vac_json['banned_urls']
-                self.urls = vac_json['urls']
+                self.banned_urls = vac_json["banned_urls"]
+                self.urls = vac_json["urls"]
         except FileNotFoundError:
             self.banned_urls = []
             self.urls = []
@@ -34,23 +34,34 @@ class Vac(commands.Cog):
         if ctx.invoked_subcommand is None:
             await self.check_vac_status_and_send_results(ctx.channel, True)
 
-    @vac.command(name='list')
+    @vac.command(name="list")
     async def list0(self, ctx: Context):
         """List current profiles to be checked"""
         if len(self.urls) != 0:
-            await ctx.channel.send('\n'.join(['{}. <{}>'.format(i + 1, url) for i, url in enumerate(self.urls)]))
+            await ctx.channel.send(
+                "\n".join(
+                    ["{}. <{}>".format(i + 1, url) for i, url in enumerate(self.urls)]
+                )
+            )
         else:
             await ctx.channel.send("No profiles registered to checker.")
 
-    @vac.command(name='banned')
+    @vac.command(name="banned")
     async def banned(self, ctx: Context):
         """List profiles that have been banned."""
         if len(self.banned_urls) != 0:
-            await ctx.channel.send('\n'.join(['{}. <{}>'.format(i + 1, url) for i, url in enumerate(self.banned_urls)]))
+            await ctx.channel.send(
+                "\n".join(
+                    [
+                        "{}. <{}>".format(i + 1, url)
+                        for i, url in enumerate(self.banned_urls)
+                    ]
+                )
+            )
         else:
             await ctx.channel.send("No profiles have been banned.")
 
-    @vac.command(name='add')
+    @vac.command(name="add")
     async def add(self, ctx: Context, url: str):
         """Add a profile to the checker"""
         if url not in self.urls:
@@ -60,7 +71,7 @@ class Vac(commands.Cog):
         else:
             await ctx.channel.send("<{}> is already registered to checker.".format(url))
 
-    @vac.command(name='remove')
+    @vac.command(name="remove")
     async def remove(self, ctx: Context, url: str):
         """Remove a profile to the checker by index or url"""
         try:
@@ -81,19 +92,23 @@ class Vac(commands.Cog):
                 await ctx.channel.send("<{}> is not registered to checker.".format(url))
 
     def write_vac(self):
-        with open(config.vac_file, 'w') as f:
-            json.dump({'banned_urls': self.banned_urls, 'urls': self.urls}, f)
+        with open(config.vac_file, "w") as f:
+            json.dump({"banned_urls": self.banned_urls, "urls": self.urls}, f)
 
-    async def check_vac_status_and_send_results(self, channel: TextChannel = None, send_if_no_results: bool = False):
+    async def check_vac_status_and_send_results(
+        self, channel: TextChannel = None, send_if_no_results: bool = False
+    ):
         response = []
         banned = []
         for url in self.urls:
             if await check_vac_status(url):
-                poggers = guild_tools.get_emoji_str('poggers')
+                poggers = guild_tools.get_emoji_str("poggers")
                 if not banned:
-                    csgo_mention = f'@&{config.csgo_id}'
+                    csgo_mention = f"@&{config.csgo_id}"
                     response.append(
-                        "<{}> players have been banned {})".format(csgo_mention, poggers)
+                        "<{}> players have been banned {})".format(
+                            csgo_mention, poggers
+                        )
                     )
                 response.append(
                     "<{}> is VAC banned! {} Removing from checker.".format(url, poggers)
@@ -108,9 +123,11 @@ class Vac(commands.Cog):
             channel = client.get_channel(int(config.default_channel))
 
         if len(response) != 0:
-            await channel.send('\n'.join(response))
+            await channel.send("\n".join(response))
         elif send_if_no_results:
-            await channel.send("No banned players found {}".format(guild_tools.get_emoji_str('angry')))
+            await channel.send(
+                "No banned players found {}".format(guild_tools.get_emoji_str("angry"))
+            )
 
 
 def setup(bot: discord.ext.commands.Bot):

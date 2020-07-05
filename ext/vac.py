@@ -106,8 +106,9 @@ class Vac(commands.Cog):
         response = []
         for url in self.urls:
             if await check_vac_status(url):
+                csgo_mention = '@&454124197048745996'
                 response.append(
-                    "<@&454124197048745996> <{}> is VAC banned! {} Removing from checker.".format(url, guild_tools.get_emoji_str('poggers'))
+                    "<{}> <{}> is VAC banned! {} Removing from checker.".format(csgo_mention, url, guild_tools.get_emoji_str('poggers'))
                 )
                 self.urls.remove(url)
                 self.banned_urls.append(url)

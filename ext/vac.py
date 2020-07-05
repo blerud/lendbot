@@ -100,10 +100,10 @@ class Vac(commands.Cog):
                 )
                 banned.append(url)
                 self.banned_urls.append(url)
-                
+
         for url in banned:
             self.urls.remove(url)
-        
+
         self.write_vac()
 
         if channel is None:

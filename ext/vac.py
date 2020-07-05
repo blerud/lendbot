@@ -38,11 +38,7 @@ class Vac(commands.Cog):
     async def list0(self, ctx: Context):
         """List current profiles to be checked"""
         if len(self.urls) != 0:
-            await ctx.channel.send(
-                "\n".join(
-                    ["{}. <{}>".format(i + 1, url) for i, url in enumerate(self.urls)]
-                )
-            )
+            await ctx.channel.send("\n".join(["{}. <{}>".format(i + 1, url) for i, url in enumerate(self.urls)]))
         else:
             await ctx.channel.send("No profiles registered to checker.")
 
@@ -50,14 +46,7 @@ class Vac(commands.Cog):
     async def banned(self, ctx: Context):
         """List profiles that have been banned."""
         if len(self.banned_urls) != 0:
-            await ctx.channel.send(
-                "\n".join(
-                    [
-                        "{}. <{}>".format(i + 1, url)
-                        for i, url in enumerate(self.banned_urls)
-                    ]
-                )
-            )
+            await ctx.channel.send("\n".join(["{}. <{}>".format(i + 1, url) for i, url in enumerate(self.banned_urls)]))
         else:
             await ctx.channel.send("No profiles have been banned.")
 
@@ -95,9 +84,7 @@ class Vac(commands.Cog):
         with open(config.vac_file, "w") as f:
             json.dump({"banned_urls": self.banned_urls, "urls": self.urls}, f)
 
-    async def check_vac_status_and_send_results(
-        self, channel: TextChannel = None, send_if_no_results: bool = False
-    ):
+    async def check_vac_status_and_send_results(self, channel: TextChannel = None, send_if_no_results: bool = False):
         response = []
         banned = []
         for url in self.urls:
@@ -105,14 +92,8 @@ class Vac(commands.Cog):
                 poggers = guild_tools.get_emoji_str("poggers")
                 if not banned:
                     csgo_mention = f"@&{config.csgo_id}"
-                    response.append(
-                        "<{}> players have been banned {})".format(
-                            csgo_mention, poggers
-                        )
-                    )
-                response.append(
-                    "<{}> is VAC banned! {} Removing from checker.".format(url, poggers)
-                )
+                    response.append("<{}> players have been banned {})".format(csgo_mention, poggers))
+                response.append("<{}> is VAC banned! {} Removing from checker.".format(url, poggers))
                 banned.append(url)
                 self.banned_urls.append(url)
         for url in banned:
@@ -125,9 +106,7 @@ class Vac(commands.Cog):
         if len(response) != 0:
             await channel.send("\n".join(response))
         elif send_if_no_results:
-            await channel.send(
-                "No banned players found {}".format(guild_tools.get_emoji_str("angry"))
-            )
+            await channel.send("No banned players found {}".format(guild_tools.get_emoji_str("angry")))
 
 
 def setup(bot: discord.ext.commands.Bot):

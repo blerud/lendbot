@@ -80,24 +80,6 @@ class Vac(commands.Cog):
             else:
                 await ctx.channel.send("<{}> is not registered to checker.".format(url))
 
-    @vac.command(name='check')
-    async def check(self, ctx: Context, url: str):
-        """Manually check a profile for a ban. Can provide an index or a url."""
-        try:
-            index = int(url)
-            if 0 < index <= len(self.urls):
-                url = self.urls[index - 1]
-            else:
-                await ctx.channel.send("{} is not a valid index.".format(index))
-                return
-        except ValueError:
-            pass
-
-        if await check_vac_status(url):
-            await ctx.channel.send("<{}> is VAC banned! {}".format(url, guild_tools.get_emoji_str('poggers')))
-        else:
-            await ctx.channel.send("<{}> is not banned {}".format(url, guild_tools.get_emoji_str('angry')))
-
     def write_vac(self):
         with open(config.vac_file, 'w') as f:
             json.dump({'banned_urls': self.banned_urls, 'urls': self.urls}, f)
@@ -107,14 +89,18 @@ class Vac(commands.Cog):
         banned = []
         for url in self.urls:
             if await check_vac_status(url):
-                csgo_mention = '@&454124197048745996'
-                poggers = 'guild_tools.get_emoji_str('poggers')'
+                poggers = guild_tools.get_emoji_str('poggers')
+                if not banned:
+                    csgo_mention = f'<@&{config.csgo_id}>'
+                    response.append(
+                        "{} players have been banned {})".format(csgo_mention, poggers)
+                    )
                 response.append(
-                    "<{}> <{}> is VAC banned! {} Removing from checker.".format(csgo_mention, url, poggers)
+                    "<{}> is VAC banned! {} Removing from checker.".format(url, poggers)
                 )
                 banned.append(url)
                 self.banned_urls.append(url)
-        
+                
         for url in banned:
             self.urls.remove(url)
         

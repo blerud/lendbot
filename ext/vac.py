@@ -80,24 +80,6 @@ class Vac(commands.Cog):
             else:
                 await ctx.channel.send("<{}> is not registered to checker.".format(url))
 
-    @vac.command(name='check')
-    async def check(self, ctx: Context, url: str):
-        """Manually check a profile for a ban. Can provide an index or a url."""
-        try:
-            index = int(url)
-            if 0 < index <= len(self.urls):
-                url = self.urls[index - 1]
-            else:
-                await ctx.channel.send("{} is not a valid index.".format(index))
-                return
-        except ValueError:
-            pass
-
-        if await check_vac_status(url):
-            await ctx.channel.send("<{}> is VAC banned! {}".format(url, guild_tools.get_emoji_str('poggers')))
-        else:
-            await ctx.channel.send("<{}> is not banned {}".format(url, guild_tools.get_emoji_str('angry')))
-
     def write_vac(self):
         with open(config.vac_file, 'w') as f:
             json.dump({'banned_urls': self.banned_urls, 'urls': self.urls}, f)

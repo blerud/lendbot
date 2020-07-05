@@ -3,6 +3,7 @@ import json
 import aioschedule as schedule
 import discord
 import requests
+from discord.channel import TextChannel
 from discord.ext import commands
 from discord.ext.commands import Context
 
@@ -44,7 +45,7 @@ class Vac(commands.Cog):
     @vac.command(name='banned')
     async def banned(self, ctx: Context):
         """List profiles that have been banned."""
-        if len(self.urls) != 0:
+        if len(self.banned_urls) != 0:
             await ctx.channel.send('\n'.join(['{}. <{}>'.format(i + 1, url) for i, url in enumerate(self.banned_urls)]))
         else:
             await ctx.channel.send("No profiles have been banned.")
@@ -101,7 +102,7 @@ class Vac(commands.Cog):
         with open(config.vac_file, 'w') as f:
             json.dump({'banned_urls': self.banned_urls, 'urls': self.urls}, f)
 
-    async def check_vac_status_and_send_results(self, send_if_no_results: bool):
+    async def check_vac_status_and_send_results(self, channel: TextChannel = None, send_if_no_results: bool = False):
         response = []
         for url in self.urls:
             if await check_vac_status(url):
@@ -113,7 +114,8 @@ class Vac(commands.Cog):
 
         self.write_vac()
 
-        channel = client.get_channel(int(config.default_channel))
+        if channel is None:
+            channel = client.get_channel(int(config.default_channel))
 
         if len(response) != 0:
             await channel.send('\n'.join(response))
@@ -128,6 +130,6 @@ def setup(bot: discord.ext.commands.Bot):
     bot.add_cog(vac)
 
     async def job():
-        await vac.check_vac_status_and_send_results(False)
+        await vac.check_vac_status_and_send_results()
 
     schedule.every().hour.do(job)

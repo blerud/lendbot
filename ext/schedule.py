@@ -135,4 +135,4 @@ def setup(bot: commands.Bot):
     bot.add_cog(schedule)
 
     aioschedule.every().minute.do(lambda: schedule.check())
-    aioschedule.every().day.do(lambda: schedule.report())
+    aioschedule.every().day.at('12:00').do(lambda: schedule.report())

@@ -23,6 +23,7 @@ extensions = [
     'ext.version',
     'ext.gpt',
     'ext.availability',
+    'ext.schedule',
 ]
 
 

@@ -8,3 +8,4 @@ venv/
 credentials.py
 karma.txt
 vac.txt
+schedule.json

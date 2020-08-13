@@ -92,7 +92,7 @@ class Vac(commands.Cog):
                 poggers = guild_tools.get_emoji_str('poggers')
                 if not banned:
                     csgo_mention = f'@&{config.csgo_id}'
-                    response.append('<{}> players have been banned {})'.format(csgo_mention, poggers))
+                    response.append('<{}> players have been banned {}'.format(csgo_mention, poggers))
                 response.append('<{}> is VAC banned! {} Removing from checker.'.format(url, poggers))
                 banned.append(url)
                 self.banned_urls.append(url)

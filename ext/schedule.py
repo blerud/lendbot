@@ -26,13 +26,11 @@ def event_to_string(event: ScheduleEvent) -> str:
 
 
 def central_time_str_from_utc(timestamp: int) -> str:
-    return datetime.datetime.fromtimestamp(timestamp).astimezone(timezone('US/Central')).strftime(
-        '%Y-%m-%d %I:%M:%S %p')
+    return datetime.datetime.fromtimestamp(timestamp).astimezone(timezone('US/Central')).strftime('%Y-%m-%d %I:%M:%S %p')
 
 
 def default_timestamps(timestamp: int) -> List[int]:
-    event_datetime = timezone('US/Central').localize(datetime.datetime.fromtimestamp(timestamp)).astimezone(
-        timezone('UTC'))
+    event_datetime = timezone('US/Central').localize(datetime.datetime.fromtimestamp(timestamp)).astimezone(timezone('UTC'))
     timestamps = [event_datetime - datetime.timedelta(minutes=30)]
     return list(map(lambda x: x.timestamp(), timestamps))
 
@@ -57,13 +55,14 @@ class Schedule(commands.Cog):
     @schedule.command(name='add')
     async def add(self, ctx: commands.Context, text: str, mention: Union[discord.User, discord.Role], *, time: str):
         date = dateparser.parse(time, settings={'TIMEZONE': 'US/Central', 'RETURN_AS_TIMEZONE_AWARE': True}).astimezone(
-            timezone('UTC'))
-        event = ScheduleEvent(text, date.timestamp(), ctx.channel.id, mention.mention,
-                              default_timestamps(date.timestamp()))
+            timezone('UTC')
+        )
+        event = ScheduleEvent(text, date.timestamp(), ctx.channel.id, mention.mention, default_timestamps(date.timestamp()))
         self.schedule_events.append(event)
         await ctx.channel.send(
             f'Registered event \'{text}\' for {mention.name} in '
-            f'{ctx.channel.name} at {central_time_str_from_utc(date.timestamp())}')
+            f'{ctx.channel.name} at {central_time_str_from_utc(date.timestamp())}'
+        )
         self.sync_file()
 
     @schedule.command(name='list')
@@ -103,7 +102,8 @@ class Schedule(commands.Cog):
                 if current_time >= other_timestamp:
                     removed_other.append(other_timestamp)
                     await guild_tools.get_channel(event.channel).send(
-                        f'{event.mention} {event.text} at {central_time_str_from_utc(event.timestamp)}')
+                        f'{event.mention} {event.text} at {central_time_str_from_utc(event.timestamp)}'
+                    )
 
             for timestamp in removed_other:
                 event.other_timestamps.remove(timestamp)
@@ -116,8 +116,13 @@ class Schedule(commands.Cog):
     async def report(self):
         jobs = []
         for event in self.schedule_events:
-            jobs.append(asyncio.create_task(guild_tools.get_channel(event.channel).send(
-                f'{event.mention} {event.text} at {central_time_str_from_utc(event.timestamp)}')))
+            jobs.append(
+                asyncio.create_task(
+                    guild_tools.get_channel(event.channel).send(
+                        f'{event.mention} {event.text} at {central_time_str_from_utc(event.timestamp)}'
+                    )
+                )
+            )
         await asyncio.wait(jobs)
 
     def sync_file(self):

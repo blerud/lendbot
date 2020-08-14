@@ -7,5 +7,5 @@ venv/
 *.pyc
 credentials.py
 karma.txt
-vac.txt
+vac.json
 schedule.json

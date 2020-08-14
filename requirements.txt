@@ -1,6 +1,7 @@
 aioschedule
 black
 boto3
+dateparser
 discord.py
 flake8
 matplotlib

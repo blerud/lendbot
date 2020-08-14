@@ -22,12 +22,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Lint with flake8, black
+    - name: Lint with black
       run: |
-        pip install flake8 black
+        pip install black
         # Stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 . --count --max-line-length=127 --statistics
+        # flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # flake8 . --count --max-line-length=127 --statistics
         # Stop if black would reformat any files. The GitHub editor is 127 chars wide
         black . --line-length 127 --skip-string-normalization --check
     - name: Test with pytest

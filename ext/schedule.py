@@ -30,7 +30,7 @@ def central_time_str_from_utc(timestamp: int) -> str:
 
 
 def default_timestamps(timestamp: int) -> List[int]:
-    event_datetime = timezone('US/Central').localize(datetime.datetime.fromtimestamp(timestamp)).astimezone(timezone('UTC'))
+    event_datetime = timezone('UTC').localize(datetime.datetime.utcfromtimestamp(timestamp))
     timestamps = [event_datetime - datetime.timedelta(minutes=30)]
     return list(map(lambda x: x.timestamp(), timestamps))
 

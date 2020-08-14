@@ -12,7 +12,7 @@ async def gpt(message):
     if not content.startswith('.gpt'):
         return
     if content.startswith('.gpt3 '):
-        query = content[len('.gpt3 ') :]
+        query = content[6:]
         await message.channel.trigger_typing()
         response = requests.post(f'{GPT3_ENDPOINT}/message', json=query).json()
         await message.channel.send(response)

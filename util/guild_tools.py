@@ -23,6 +23,10 @@ def get_default_channel() -> TextChannel:
     return get_default_guild().get_channel(config.default_channel)
 
 
+def get_channel(id: int) -> TextChannel:
+    return get_default_guild().get_channel(id)
+
+
 def get_emoji_str(name: str) -> str:
     emojis: Tuple[Emoji] = get_default_guild().emojis
     emoji: Optional[Emoji] = next((e for e in emojis if e.name == name), None)

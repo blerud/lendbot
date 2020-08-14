@@ -1,17 +1,28 @@
 import requests
 
 GPT_ENDPOINT = 'https://transformer.huggingface.co/autocomplete/gpt2/large'
+GPT3_ENDPOINT = 'http://14fba6b270e0.ngrok.io'
 GPT_PARAMS = {'model_size': 'gpt2/large', 'top_p': 0.9, 'temperature': 1, 'max_time': 2}
 
 
 async def gpt(message):
     if message.author.bot:
         return
-    if not message.content.startswith('.gpt'):
+    content = message.content
+    if not content.startswith('.gpt'):
+        return
+    if content.startswith('.gpt3 '):
+        query = content[len('.gpt3 '):]
+        await message.channel.trigger_typing()
+        response = requests.post(f'{GPT3_ENDPOINT}/message', json=query).json()
+        await message.channel.send(response)
+        return
+    elif content.startswith('.gpt3clear'):
+        requests.post(f'{GPT3_ENDPOINT}/clear')
         return
 
     # format context as a question
-    context = message.content[5:]
+    context = content[5:]
     if not context:
         return
     if context[-1] != '?':

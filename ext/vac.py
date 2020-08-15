@@ -40,7 +40,7 @@ class Vac(commands.Cog):
         if len(self.urls) != 0:
             await ctx.channel.send('\n'.join(['{}. <{}>'.format(i + 1, url) for i, url in enumerate(self.urls)]))
         else:
-            await ctx.channel.send("No profiles registered to checker.")
+            await ctx.channel.send('No profiles registered to checker.')
 
     @vac.command(name='banned')
     async def banned(self, ctx: Context):
@@ -48,7 +48,7 @@ class Vac(commands.Cog):
         if len(self.banned_urls) != 0:
             await ctx.channel.send('\n'.join(['{}. <{}>'.format(i + 1, url) for i, url in enumerate(self.banned_urls)]))
         else:
-            await ctx.channel.send("No profiles have been banned.")
+            await ctx.channel.send('No profiles have been banned.')
 
     @vac.command(name='add')
     async def add(self, ctx: Context, url: str):
@@ -56,9 +56,9 @@ class Vac(commands.Cog):
         if url not in self.urls:
             self.urls.append(url)
             self.write_vac()
-            await ctx.channel.send("Registered <{}> to checker.".format(url))
+            await ctx.channel.send('Registered <{}> to checker.'.format(url))
         else:
-            await ctx.channel.send("<{}> is already registered to checker.".format(url))
+            await ctx.channel.send('<{}> is already registered to checker.'.format(url))
 
     @vac.command(name='remove')
     async def remove(self, ctx: Context, url: str):
@@ -69,16 +69,16 @@ class Vac(commands.Cog):
                 removed_url = self.urls[index - 1]
                 del self.urls[index - 1]
                 self.write_vac()
-                await ctx.channel.send("Removed <{}> from checker.".format(removed_url))
+                await ctx.channel.send('Removed <{}> from checker.'.format(removed_url))
             else:
-                await ctx.channel.send("{} is not a valid index.".format(index))
+                await ctx.channel.send('{} is not a valid index.'.format(index))
         except ValueError:
             if url in self.urls:
                 self.urls.remove(url)
                 self.write_vac()
-                await ctx.channel.send("Removed <{}> from checker.".format(url))
+                await ctx.channel.send('Removed <{}> from checker.'.format(url))
             else:
-                await ctx.channel.send("<{}> is not registered to checker.".format(url))
+                await ctx.channel.send('<{}> is not registered to checker.'.format(url))
 
     def write_vac(self):
         with open(config.vac_file, 'w') as f:
@@ -86,16 +86,18 @@ class Vac(commands.Cog):
 
     async def check_vac_status_and_send_results(self, channel: TextChannel = None, send_if_no_results: bool = False):
         response = []
+        banned = []
         for url in self.urls:
             if await check_vac_status(url):
-                response.append(
-                    "<@&454124197048745996> <{}> is VAC banned! {} Removing from checker.".format(
-                        url, guild_tools.get_emoji_str('poggers')
-                    )
-                )
-                self.urls.remove(url)
+                poggers = guild_tools.get_emoji_str('poggers')
+                if not banned:
+                    csgo_mention = f'@&{config.csgo_id}'
+                    response.append('<{}> players have been banned {}'.format(csgo_mention, poggers))
+                response.append('<{}> is VAC banned! {} Removing from checker.'.format(url, poggers))
+                banned.append(url)
                 self.banned_urls.append(url)
-
+        for url in banned:
+            self.urls.remove(url)
         self.write_vac()
 
         if channel is None:
@@ -104,7 +106,7 @@ class Vac(commands.Cog):
         if len(response) != 0:
             await channel.send('\n'.join(response))
         elif send_if_no_results:
-            await channel.send("No banned players found {}".format(guild_tools.get_emoji_str('angry')))
+            await channel.send('No banned players found {}'.format(guild_tools.get_emoji_str('angry')))
 
 
 def setup(bot: discord.ext.commands.Bot):

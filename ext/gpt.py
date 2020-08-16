@@ -1,7 +1,7 @@
 import requests
 
 GPT_ENDPOINT = 'https://transformer.huggingface.co/autocomplete/gpt2/large'
-GPT3_ENDPOINT = 'http://14fba6b270e0.ngrok.io'
+GPT3_ENDPOINT = 'http://dd3a16430dd5.ngrok.io'
 GPT_PARAMS = {'model_size': 'gpt2/large', 'top_p': 0.9, 'temperature': 1, 'max_time': 2}
 
 

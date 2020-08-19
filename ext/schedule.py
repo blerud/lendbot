@@ -6,6 +6,7 @@ from typing import NamedTuple, List, Union
 import aioschedule
 import dateparser
 import discord
+import humanize
 from discord.ext import commands
 from pytz import timezone
 
@@ -22,11 +23,16 @@ class ScheduleEvent(NamedTuple):
 
 def event_to_string(event: ScheduleEvent) -> str:
     time_str = central_time_str_from_utc(event.timestamp)
-    return f'\'{event.text}\' in {guild_tools.get_channel(event.channel).name} at {time_str}'
+    relative_time_str = relative_time_str_from_utc(event.timestamp)
+    return f'\'{event.text}\' in {guild_tools.get_channel(event.channel).name} at {time_str} ({relative_time_str})'
 
 
 def central_time_str_from_utc(timestamp: int) -> str:
     return datetime.datetime.fromtimestamp(timestamp).astimezone(timezone('US/Central')).strftime('%Y-%m-%d %I:%M:%S %p')
+
+
+def relative_time_str_from_utc(timestamp: int) -> str:
+    return humanize.naturaltime(datetime.datetime.fromtimestamp(timestamp))
 
 
 def default_timestamps(timestamp: int) -> List[int]:

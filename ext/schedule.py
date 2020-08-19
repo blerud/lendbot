@@ -22,9 +22,12 @@ class ScheduleEvent(NamedTuple):
 
 
 def event_to_string(event: ScheduleEvent) -> str:
-    time_str = central_time_str_from_utc(event.timestamp)
-    relative_time_str = relative_time_str_from_utc(event.timestamp)
-    return f'\'{event.text}\' in {guild_tools.get_channel(event.channel).name} at {time_str} ({relative_time_str})'
+    time_str = timestamp_to_string(event.timestamp)
+    return f'\'{event.text}\' in {guild_tools.get_channel(event.channel).name} at {time_str}'
+
+
+def timestamp_to_string(timestamp: int) -> str:
+    return f'{central_time_str_from_utc(timestamp)} ({relative_time_str_from_utc(timestamp)})'
 
 
 def central_time_str_from_utc(timestamp: int) -> str:
@@ -67,7 +70,7 @@ class Schedule(commands.Cog):
         self.schedule_events.append(event)
         await ctx.channel.send(
             f'Registered event \'{text}\' for {mention.name} in '
-            f'{ctx.channel.name} at {central_time_str_from_utc(date.timestamp())}'
+            f'{ctx.channel.name} at {timestamp_to_string(date.timestamp())}'
         )
         self.sync_file()
 
@@ -108,7 +111,7 @@ class Schedule(commands.Cog):
                 if current_time >= other_timestamp:
                     removed_other.append(other_timestamp)
                     await guild_tools.get_channel(event.channel).send(
-                        f'{event.mention} {event.text} at {central_time_str_from_utc(event.timestamp)}'
+                        f'{event.mention} {event.text} at {timestamp_to_string(event.timestamp)}'
                     )
 
             for timestamp in removed_other:
@@ -125,7 +128,7 @@ class Schedule(commands.Cog):
             jobs.append(
                 asyncio.create_task(
                     guild_tools.get_channel(event.channel).send(
-                        f'{event.mention} {event.text} at {central_time_str_from_utc(event.timestamp)}'
+                        f'{event.mention} {event.text} at {timestamp_to_string(event.timestamp)}'
                     )
                 )
             )

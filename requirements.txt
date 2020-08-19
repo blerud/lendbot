@@ -4,6 +4,7 @@ boto3
 dateparser
 discord.py
 flake8
+humanize
 matplotlib
 numpy
 pandas

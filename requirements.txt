@@ -14,3 +14,4 @@ pre-commit
 scipy
 yfinance
 requests
+seaborn

@@ -50,7 +50,7 @@ class Schedule(commands.Cog):
     def __init__(self):
         self.schedule_events = []
         try:
-            with open(config.schedule_file) as file:
+            with open(config.SCHEDULE_FILE) as file:
                 events_lists = json.load(file)
                 for event in events_lists:
                     self.schedule_events.append(ScheduleEvent(*event))
@@ -135,7 +135,7 @@ class Schedule(commands.Cog):
         await asyncio.wait(jobs)
 
     def sync_file(self):
-        with open(config.schedule_file, 'w') as f:
+        with open(config.SCHEDULE_FILE, 'w') as f:
             json.dump(self.schedule_events, f)
 
 

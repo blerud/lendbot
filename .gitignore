@@ -3,6 +3,7 @@ credentials.py
 karma.txt
 vac.json
 schedule.json
+*.csv
 
 # Created by https://www.toptal.com/developers/gitignore/api/osx,macos,visualstudiocode,vscode,python,pycharm
 # Edit at https://www.toptal.com/developers/gitignore?templates=osx,macos,visualstudiocode,vscode,python,pycharm

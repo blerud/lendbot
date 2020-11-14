@@ -67,14 +67,6 @@ async def pokernow(ctx: Context):
         ```'''
     )
 
-    # r'\"(\w+(?:\s\w+)?) \@ (\w+)\" (joined|quits) the game with a stack of (\d+\.\d\d)'
-    # df = pd.read_csv('poker_now_log.csv', parse_dates=True, infer_datetime_format=True)
-    # username, uid, event_type, quantity
-    # entry_exits = df.entry.str.extract(
-    #     r'"(.+(?:.+)?)\s@\s(.+)"+ (joined|quits) the game with a stack of (\d+\.\d\d)'
-    # ).dropna().iloc[::-1]
-    # losing a buy in: The player "benjam @ laRAysvKgm" quits the game with a stack of 0.00.
-
 
 @pokernow.command(name='plot')
 async def plot_logs(ctx: Context):

@@ -1,0 +1,9 @@
+[flake8]
+max-line-length = 127
+ignore = W504, \  # Line break after binary operator
+		 W503, \  # Line break before binary operator
+		 E226, \  # Whitespace around binary operator
+		 E731, \  # Do not assign a lambda
+		 E266, \  # Too many leading '#' for block comment
+		 E251, \  # Unexpected spaces around keyword/param equals
+	 	 E701, \  # Multiple statements on one line (colon)

@@ -9,8 +9,9 @@ matplotlib
 numpy
 pandas
 pandas_datareader
-pytest
 pre-commit
-scipy
-yfinance
+pytest
 requests
+scipy
+seaborn
+yfinance

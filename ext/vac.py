@@ -20,7 +20,7 @@ async def check_vac_status(url):
 class Vac(commands.Cog):
     def __init__(self):
         try:
-            with open(config.vac_file, 'r') as f:
+            with open(config.VAC_FILE, 'r') as f:
                 vac_json = json.load(f)
                 self.banned_urls = vac_json['banned_urls']
                 self.urls = vac_json['urls']
@@ -81,7 +81,7 @@ class Vac(commands.Cog):
                 await ctx.channel.send('<{}> is not registered to checker.'.format(url))
 
     def write_vac(self):
-        with open(config.vac_file, 'w') as f:
+        with open(config.VAC_FILE, 'w') as f:
             json.dump({'banned_urls': self.banned_urls, 'urls': self.urls}, f)
 
     async def check_vac_status_and_send_results(self, channel: TextChannel = None, send_if_no_results: bool = False):
@@ -91,7 +91,7 @@ class Vac(commands.Cog):
             if await check_vac_status(url):
                 poggers = guild_tools.get_emoji_str('poggers')
                 if not banned:
-                    csgo_mention = f'@&{config.csgo_id}'
+                    csgo_mention = f'@&{config.CSGO_ID}'
                     response.append('<{}> players have been banned {}'.format(csgo_mention, poggers))
                 response.append('<{}> is VAC banned! {} Removing from checker.'.format(url, poggers))
                 banned.append(url)
@@ -101,7 +101,7 @@ class Vac(commands.Cog):
         self.write_vac()
 
         if channel is None:
-            channel = client.get_channel(int(config.default_channel))
+            channel = client.get_channel(int(config.DEFAULT_CHANNEL))
 
         if len(response) != 0:
             await channel.send('\n'.join(response))

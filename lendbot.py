@@ -12,7 +12,6 @@ extensions = [
     'util.guild_tools',
     'ext.eightball',
     'ext.karma',
-    'ext.maga',
     'ext.minecraft',
     'ext.pin',
     'ext.ping',
@@ -24,12 +23,13 @@ extensions = [
     'ext.gpt',
     'ext.availability',
     'ext.schedule',
+    'ext.pokernow',
 ]
 
 
 class Lendbot(commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix=config.prefix)
+        super().__init__(command_prefix=config.PREFIX)
 
         self.client_id = credentials.client_id
 

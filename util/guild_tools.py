@@ -16,11 +16,11 @@ def get_bot() -> Bot:
 
 
 def get_default_guild() -> Guild:
-    return bot.get_guild(config.default_guild)
+    return bot.get_guild(config.DEFAULT_GUILD)
 
 
 def get_default_channel() -> TextChannel:
-    return get_default_guild().get_channel(config.default_channel)
+    return get_default_guild().get_channel(config.DEFAULT_CHANNEL)
 
 
 def get_channel(id: int) -> TextChannel:

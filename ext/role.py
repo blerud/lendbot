@@ -22,7 +22,7 @@ async def role(ctx):
 
 
 @role.command(name='list')
-async def listusers(ctx):
+async def list0(ctx):
     guild = ctx.guild
     if guild is not None:
         msg = 'Roles in this server:\n```'

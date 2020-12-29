@@ -1,6 +1,7 @@
 import datetime
 import logging
 
+import discord
 from discord.ext import commands
 
 import credentials
@@ -29,7 +30,8 @@ extensions = [
 
 class Lendbot(commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix=config.prefix)
+        intents = discord.Intents.all()
+        super().__init__(command_prefix=config.prefix, intents=intents)
 
         self.client_id = credentials.client_id
 

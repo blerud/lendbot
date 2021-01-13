@@ -1,8 +1,8 @@
 import requests
 
-GPT_ENDPOINT = 'https://transformer.huggingface.co/autocomplete/gpt2/large'
+GPT_ENDPOINT = 'https://transformer.huggingface.co/autocomplete/distilgpt2/small'
 GPT3_ENDPOINT = 'http://dd3a16430dd5.ngrok.io'
-GPT_PARAMS = {'model_size': 'gpt2/large', 'top_p': 0.9, 'temperature': 1, 'max_time': 2}
+GPT_PARAMS = {'model_size': 'distilgpt2/small', 'top_p': 0.9, 'temperature': 0.9, 'max_time': 3}
 
 
 async def gpt(message):
@@ -25,9 +25,10 @@ async def gpt(message):
     context = content[5:]
     if not context:
         return
+    context = context[0].upper() + context[1:]
     if context[-1] != '?':
         context += '?'
-    context = f'Q: {context}\n A: '
+    context = f'Question: {context}\nAnswer:'
 
     await message.channel.trigger_typing()
 
@@ -36,18 +37,18 @@ async def gpt(message):
     req = requests.post(GPT_ENDPOINT, json=json)
     req = req.json()
 
-    # choose first sentence that actually ends
+    # choose longest sentence that actually ends
     sentences = [x['value'] for x in req['sentences']]
     stopch = ['.', '!', '?', '\n']
-    out = sentences[0]
+    out = ''
     for sentence in sentences:
         match = [sentence.find(ch) for ch in stopch]
         match = [x for x in match if x != -1]
-        if match:
-            out = sentence[: min(match)]
+        if match and max(match) + 1 > len(out):
+            out = sentence[: max(match) + 1]
             break
 
-    await message.channel.send(out)
+    await message.channel.send(out or sentences[0])
 
 
 def setup(bot):

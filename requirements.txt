@@ -23,7 +23,7 @@ idna==2.9
 iniconfig==1.0.1
 jmespath==0.10.0
 kiwisolver==1.2.0
-lxml==4.6.2
+lxml==4.6.3
 matplotlib==3.3.0
 mccabe==0.6.1
 more-itertools==8.3.0

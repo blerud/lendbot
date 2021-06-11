@@ -57,6 +57,6 @@ tzlocal==2.1
 urllib3==1.25.9
 virtualenv==20.0.21
 wcwidth==0.2.4
-websockets==8.1
+websockets==9.1
 yarl==1.4.2
 yfinance==0.1.55

@@ -25,6 +25,7 @@ extensions = [
     'ext.gpt',
     'ext.availability',
     'ext.schedule',
+    'ext.lol',
 ]
 
 

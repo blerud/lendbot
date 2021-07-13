@@ -1,21 +1,19 @@
 from discord.ext import commands
 from riotwatcher import LolWatcher, ApiError
 from time import time
+from discord.ext.commands import Context
 import json
 import typing
 import discord
-
-from discord.ext.commands import Context
-
-key = 'RGAPI-ea5ee892-d481-4c2f-8972-e24abed3b763'
-watcher = LolWatcher(key)
+import credentials
 
 
 class Lol(commands.Cog):
-    _filename = 'lol.json'
+    _filename = 'lol.txt'
 
     def __init__(self):
         self.lol_dict = self.load_from_file(self._filename)
+        self.watcher = LolWatcher(credentials.riot_key)
 
     @commands.group()
     async def lol(self, ctx: Context):
@@ -23,6 +21,7 @@ class Lol(commands.Cog):
         if ctx.invoked_subcommand is None:
             await ctx.send(
                 '''```.lol add [user] [summonername]
+.lol delete [user]
 .lol daysclean [user]
 .lol list [user]```'''
             )
@@ -39,10 +38,10 @@ class Lol(commands.Cog):
         days = None
 
         for name in names:
-            summoner = watcher.summoner.by_name('na1', name)
+            summoner = self.watcher.summoner.by_name('na1', name)
 
             try:
-                matches = watcher.match.matchlist_by_account('na1', summoner['accountId'], ['420'], None, None, 0, 1)
+                matches = self.watcher.match.matchlist_by_account('na1', summoner['accountId'], ['420'], None, None, 0, 1)
                 recent_match = matches['matches'][0]
                 timestamp_diff = (time() * 1000) - recent_match['timestamp']
                 days_diff = int(timestamp_diff / (1000 * 60 * 60 * 24))
@@ -58,18 +57,18 @@ class Lol(commands.Cog):
             await ctx.send("{0} has been clean for {1} days".format(user, days))
 
     @lol.command(name='add')
-    async def add(self, ctx, user: discord.Member, summonername: str):
+    async def add(self, ctx: Context, user: discord.Member, summoner_name: str):
         """Add user's summoner name to LoL list."""
         key = str(user.id)
         if key not in self.lol_dict:
             self.lol_dict[key] = []
 
-        self.lol_dict[key].append(summonername)
+        self.lol_dict[key].append(summoner_name)
         self.write_to_file(self._filename, self.lol_dict)
         await ctx.send("{0}: {1}".format(user, self.lol_dict[key]))
 
     @lol.command(name='list')
-    async def list0(self, ctx, user: discord.Member):
+    async def list0(self, ctx: Context, user: discord.Member):
         """List user's summoner names."""
         key = str(user.id)
         if key not in self.lol_dict:
@@ -77,13 +76,16 @@ class Lol(commands.Cog):
             return
         await ctx.send("{0}: {1}".format(user, self.lol_dict[key]))
 
-    @lol.command(name='remove')
-    async def remove(self, ctx, user: discord.Member, summonername: str):
-        """Remove user's summoner names from LoL list."""
+    @lol.command(name='delete')
+    async def delete(self, ctx: Context, user: discord.Member):
+        """Delete user their summoner names from LoL list."""
         key = str(user.id)
         if key in self.lol_dict:
             del self.lol_dict[key]
             self.write_to_file(self._filename, self.lol_dict)
+            await ctx.send("Deleted user {0} and their summoner names from list".format(user))
+        else:
+            await ctx.send("User {0} not found in list".format(user))
 
     def load_from_file(self, filename: str) -> typing.Dict[str, int]:
         try:

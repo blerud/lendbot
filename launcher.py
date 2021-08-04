@@ -2,7 +2,6 @@ import asyncio
 import logging.config
 import os
 import traceback
-from datetime import datetime
 
 import aioschedule as schedule
 

@@ -29,8 +29,7 @@ log.setLevel(logging.INFO)
 
 if not os.path.exists('logs'):
     os.makedirs('logs')
-filename = datetime.now().strftime('logs/lendbot_%Y.%m.%d-%H.%M.%S.log')
-fh = logging.FileHandler(filename=filename)
+fh = logging.RotatingFileHandler('logs/lendbot.log', maxBytes=10000, backupCount=5)
 formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
 fh.setFormatter(formatter)
 log.addHandler(fh)

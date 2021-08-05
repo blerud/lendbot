@@ -1,4 +1,5 @@
 import asyncio
+import logging.handlers
 import logging.config
 import os
 import traceback
@@ -28,7 +29,7 @@ log.setLevel(logging.INFO)
 
 if not os.path.exists('logs'):
     os.makedirs('logs')
-fh = logging.RotatingFileHandler('logs/lendbot.log', maxBytes=10000, backupCount=5)
+fh = logging.handlers.RotatingFileHandler('logs/lendbot.log', maxBytes=10000, backupCount=5)
 formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
 fh.setFormatter(formatter)
 log.addHandler(fh)

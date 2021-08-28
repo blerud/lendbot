@@ -13,7 +13,7 @@ class Lol(commands.Cog):
 
     def __init__(self):
         self.lol_dict = self.load_from_file(self._filename)
-        self.watcher = LolWatcher(credentials.riot_key, default_match_v5=True)
+        self.watcher = LolWatcher(credentials.riot_key)
 
     @commands.group()
     async def lol(self, ctx: Context):
@@ -41,9 +41,9 @@ class Lol(commands.Cog):
             summoner = self.watcher.summoner.by_name('na1', name)
 
             try:
-                matches = self.watcher.match.matchlist_by_puuid('AMERICAS', summoner['puuid'], 0, 1, 420)
-                recent_match = self.watcher.match.by_id('AMERICAS', matches[0])
-                timestamp_diff = (time() * 1000) - recent_match['info']['gameStartTimestamp']
+                matches = self.watcher.match.matchlist_by_account('na1', summoner['accountId'], ['420'], None, None, 0, 1)
+                recent_match = matches['matches'][0]
+                timestamp_diff = (time() * 1000) - recent_match['timestamp']
                 days_diff = int(timestamp_diff / (1000 * 60 * 60 * 24))
                 if days is None or days_diff > days:
                     days = days_diff

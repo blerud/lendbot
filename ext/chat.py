@@ -8,7 +8,8 @@ from credentials import openai_key
 openai.api_key = openai_key
 
 MODEL = "gpt-3.5-turbo"
-PROMPT = "You are a helpful assistant."
+NAME = "lendbot"
+PROMPT = f"You are a {NAME}, helpful assistant."
 CONTEXT = 10
 RESET_HISTORY = ".reset"
 
@@ -43,7 +44,7 @@ async def retrieve_history(channel):
         if RESET_HISTORY in message.content:
             reset_index = i
     reset_index += 1
-    return context[reset_index:]
+    return context[reset_index:-1]
 
 
 def retrieve_chat(msg: discord.Message, history: List[discord.Message], bot):
@@ -53,18 +54,25 @@ def retrieve_chat(msg: discord.Message, history: List[discord.Message], bot):
             continue
         messages.append(create_openai_message(message, bot))
     messages.append(create_openai_message(msg, bot))
-    for m in messages:
-        print(m)
-    print(messages)
     response = openai.ChatCompletion.create(model=MODEL, messages=messages)
-    return response["choices"][0]["message"]["content"]
+    return trim_response(response["choices"][0]["message"]["content"])
 
 
 def create_openai_message(message: discord.Message, bot):
     role = "assistant" if message.author.id == bot.user.id else "user"
-    user = message.author.display_name
-    content = f"{user}: {message.clean_content}"
+    user = NAME if message.author.id == bot.user.id else message.author.display_name
+    content = f"{user}: {replace_name(message.clean_content, bot)}"
     return {"role": role, "content": content}
+
+
+def replace_name(msg, bot):
+    return msg.replace(bot.user.display_name, NAME)
+
+
+def trim_response(msg):
+    if msg.startswith(NAME + ": "):
+        return msg.replace(NAME + ": ", "")
+    return msg
 
 
 def setup(bot):

@@ -26,6 +26,7 @@ extensions = [
     'ext.availability',
     'ext.schedule',
     'ext.lol',
+    'ext.chat',
 ]
 
 

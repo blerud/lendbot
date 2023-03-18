@@ -70,9 +70,9 @@ def replace_name(msg, bot):
 
 
 def trim_response(msg):
-    if msg.startswith(NAME + ": "):
-        return msg.replace(NAME + ": ", "")
-    return msg
+    if msg.startswith(NAME + ":"):
+        return msg.replace(NAME + ":", "")
+    return msg.lstrip()
 
 
 def setup(bot):

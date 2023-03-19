@@ -21,9 +21,10 @@ def create_listener(bot):
         if not mentioned(bot, message):
             return
 
-        history = await retrieve_history(message.channel)
-        response = retrieve_chat(message, history, bot)
-        await message.channel.send(response)
+        async with message.channel.typing():
+            history = await retrieve_history(message.channel)
+            response = retrieve_chat(message, history, bot)
+            await message.channel.send(response)
 
     return chat
 

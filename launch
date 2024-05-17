@@ -1,3 +1,6 @@
 #!/bin/bash -x
+rm -rf logs/*
+mkdir -p logs
+
 venv/bin/pip3 install -r requirements.txt
-venv/bin/python3 launcher.py 2>&1 | tee logs/stdout-stderr &
+( (venv/bin/python3 launcher.py 2>&1 & echo $! > logs/lendbot.pid) | tee logs/stdout-stderr ) &

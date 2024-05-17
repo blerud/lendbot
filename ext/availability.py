@@ -1,10 +1,15 @@
 from discord.ext import commands
+import discord
 
 
-@commands.command()
-async def availability(ctx):
-    await ctx.channel.send('99.999%')
+class AvailabilityCog(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.slash_command(name="availability", description="Get the availability percentage")
+    async def availability(self, ctx: discord.ApplicationContext):
+        await ctx.respond('99.999%')
 
 
-def setup(bot: commands.Bot):
-    bot.add_command(availability)
+def setup(bot):
+    bot.add_cog(AvailabilityCog(bot))

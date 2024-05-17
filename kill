@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [ -f "logs/lendbot.pid" ]; then
+    # Read the PID from the file
+    pid=$(cat logs/lendbot.pid)
+
+    if ps -p $pid > /dev/null; then
+        # Kill the process
+        kill $pid
+        echo "Process with PID $pid has been terminated."
+    else
+        echo "Process with PID $pid is not running."
+    fi
+
+    rm logs/lendbot.pid
+    echo "PID file has been removed."
+else
+    echo "PID file not found."
+fi

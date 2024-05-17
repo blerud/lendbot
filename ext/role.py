@@ -1,100 +1,85 @@
 import logging
 import random
-
 import discord
 from discord.ext import commands
 
 log = logging.getLogger(__name__)
 
 
-@commands.group()
-async def role(ctx):
-    if ctx.message.content.strip() == '.role':
-        await ctx.send(
-            '''```.role create [role]
-.role list
-.role rename [role] [newrole]
-.role delete [role]
-.role listusers [role]
-.role addusers [role] [users]...
-.role delusers [role] [users]...```'''
-        )
+class RoleCommands(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
 
+    role = discord.SlashCommandGroup(name='role', description='Manage roles')
 
-@role.command(name='list')
-async def list0(ctx):
-    guild = ctx.guild
-    if guild is not None:
-        msg = 'Roles in this server:\n```'
-        for role in guild.roles:
-            if role.name == '@everyone':
-                continue
-            msg += role.name + '\n'
-        msg += '```'
-        await ctx.send(msg)
+    @role.command(name='list', description='List all roles in the server')
+    async def list_roles(self, ctx):
+        guild = ctx.guild
+        if guild is not None:
+            msg = 'Roles in this server:\n```\n'
+            for role in guild.roles:
+                if role.name == '@everyone':
+                    continue
+                msg += role.name + '\n'
+            msg += '```'
+            await ctx.respond(msg)
 
+    @role.command(name='create', description='Create a new role')
+    async def create_role(self, ctx, *, role: str):
+        guild = ctx.guild
+        try:
+            await guild.create_role(name=role, mentionable=True, colour=discord.Colour(0).from_hsv(random.random(), 0.6, 0.7))
+            await ctx.respond(f'Created role "{role}"')
+        except Exception as e:
+            log.warning('Failed to create role "%s", %s', role, str(e))
+            await ctx.respond(f'Failed to create role "{role}"')
 
-@role.command(name='create')
-async def create_role(ctx, role: str):
-    guild = ctx.guild
+    @role.command(name='rename', description='Rename a role')
+    async def rename_role(self, ctx, role: discord.Role, *, newrole: str):
+        oldrole = role.name
+        try:
+            await role.edit(name=newrole)
+            await ctx.respond(f'Renamed role "{oldrole}" to "{newrole}"')
+        except Exception as e:
+            log.warning('Failed to rename role "%s" to "%s", %s', role, newrole, str(e))
+            await ctx.respond(f'Failed to rename role "{oldrole}"')
 
-    try:
-        await guild.create_role(name=role, mentionable=True, colour=discord.Colour(0).from_hsv(random.random(), 0.6, 0.7))
-        await ctx.send('Created role \"{}\"'.format(role))
-    except Exception as e:
-        log.warning('failed create role \"%s\", %s', role, str(e))
+    @role.command(name='delete', description='Delete a role')
+    async def delete_role(self, ctx, *, role: discord.Role):
+        try:
+            await role.delete()
+            await ctx.respond(f'Deleted role "{role}"')
+        except Exception as e:
+            log.warning('Failed to delete role "%s", %s', role, str(e))
+            await ctx.respond(f'Failed to delete role "{role}"')
 
+    @role.command(name='listusers', description='List users with a specific role')
+    async def list_users(self, ctx, *, role: discord.Role):
+        try:
+            members = [member.mention for member in role.members]
+            await ctx.respond(f'Users with the role "{role}": {", ".join(members)}')
+        except Exception as e:
+            log.warning('Failed to retrieve users with the role "%s", %s', role, str(e))
+            await ctx.respond(f'Failed to retrieve users with the role "{role}"')
 
-@role.command(name='rename')
-async def rename_role(ctx, role: discord.Role, newrole: str):
-    oldrole = role.name
-
-    try:
-        await role.edit(name=newrole)
-        await ctx.send('Renamed role \"{}\" to \"{}\"'.format(oldrole, newrole))
-    except Exception as e:
-        log.warning('failed edit role \"%s\" to \"%s\", %s', role, newrole, str(e))
-
-
-@role.command(name='delete')
-async def delete_role(ctx, role: discord.Role):
-    try:
-        for member in role.members:
-            await member.remove_roles(role)
-        await role.delete()
-        await ctx.send('Deleted role \"{}\"'.format(role))
-    except Exception as e:
-        log.warning('failed delete role \"%s\", %s', role, str(e))
-
-
-@role.command(name='listusers')
-async def list_users(ctx, role: discord.Role):
-    try:
-        members = list(map(lambda x: x.nick if x.nick is not None else x.name, role.members))
-        await ctx.send('Users in role \"{}\": {}'.format(role, ', '.join(members)))
-    except Exception as e:
-        log.warning('failed retrieve users of role \"%s\"', role, str(e))
-
-
-@role.command(name='addusers')
-async def add_users(ctx, role: discord.Role, members: commands.Greedy[discord.Member]):
-    try:
-        for member in members:
+    @role.command(name='adduser', description='Add user to a role')
+    async def add_user(self, ctx, role: discord.Role, member: discord.Member):
+        try:
             await member.add_roles(role)
-        await ctx.send('Added users {} to \"{}\"'.format(list(map(lambda x: x.name, members)), role))
-    except Exception as e:
-        log.warning('failed add role \"%s\" to %d members, %s', role, len(members), str(e))
+            await ctx.respond(f'Added {member.name} to the role "{role}"')
+        except Exception as e:
+            log.warning('Failed to add user to the role "%s", %s', role, str(e))
+            await ctx.respond(f'Failed to add {member.name} to the role "{role}"')
 
-
-@role.command(name='delusers')
-async def del_users(ctx, role: discord.Role, members: commands.Greedy[discord.Member]):
-    try:
-        for member in members:
+    @role.command(name='deluser', description='Remove user from a role')
+    async def del_user(self, ctx, role: discord.Role, member: discord.Member):
+        try:
             await member.remove_roles(role)
-        await ctx.send('Removed users {} from \"{}\"'.format(list(map(lambda x: x.name, members)), role))
-    except Exception as e:
-        log.warning('failed remove role \"%s\" from %d members, %s', role, len(members), str(e))
+            await ctx.respond(f'Removed {member.name} from the role "{role}"')
+        except Exception as e:
+            log.warning('Failed to remove user from the role "%s", %s', role, str(e))
+            await ctx.respond(f'Failed to remove {member.name} from the role "{role}"')
 
 
 def setup(bot):
-    bot.add_command(role)
+    bot.add_cog(RoleCommands(bot))
